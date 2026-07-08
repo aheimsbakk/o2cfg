@@ -1,0 +1,26 @@
+[project]
+name = "o2cfg"
+version = "0.1.0"
+description = "Auto-discover OpenAI-compatible models and generate opencode.json provider configs."
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest", "pytest-cov", "coverage"]
+
+[project.scripts]
+o2cfg = "o2cfg.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["o2cfg*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["o2cfg"]
+omit = ["tests/*"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 80

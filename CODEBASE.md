@@ -16,8 +16,8 @@ o2cfg/
 ├── README.md               # usage, install, quick start
 ├── o2cfg/                  # source package
 │   ├── __init__.py         # package marker, version string
-│   ├── __main__.py         # entry point: argparse dispatch to main()
-│   └── cli.py              # argparse setup, argument definitions, subparsers
+│   ├── __main__.py         # entry point: argparse dispatch, discovery pipeline, output writer
+│   ├── cli.py              # argparse setup, argument definitions, verbosity resolution
 │   ├── config.py           # Config Resolver — merges CLI args + env vars, provides resolved settings object
 │   ├── client.py           # OpenAI Client — HTTP GET /v1/models, timeout, auth header, error handling
 │   ├── filter.py           # Model Filter — apply denylist first, then allowlist; no-op when both absent/empty
@@ -29,7 +29,8 @@ o2cfg/
 │   ├── config_test.py      # Config Resolver — env var merging, provider name resolution fallback chain, output null default
 │   ├── client_test.py      # OpenAI Client — timeout, auth header injection, HTTP error codes, malformed JSON
 │   ├── filter_test.py      # Model Filter — denylist removes entries, allowlist narrows to subset, both combined, empty/no-op cases
-│   └── mapper_test.py      # Model Mapper — id/name mapping, context/output extracted or null + override path
+│   ├── mapper_test.py      # Model Mapper — id/name mapping, context/output extracted or null + override path
+│   └── main_test.py        # Integration tests — full run pipeline, output writing, mocked discovery
 └── scripts/
     └── verify_codebase_sync.sh  # sync verification for CODEBASE.md physical paths
 ```
@@ -45,7 +46,8 @@ o2cfg/
 | OpenAI Client             | `o2cfg/client.py`       | `tests/client_test.py`  | Timeout, Bearer auth, error boundaries   |
 | Model Filter              | `o2cfg/filter.py`       | `tests/filter_test.py`  | Denylist first, then allowlist           |
 | Model Mapper              | `o2cfg/mapper.py`       | `tests/mapper_test.py`  | Schema transformation, auto-discovery    |
-| Output Writer (stdout/file) | (integrated in `__main__.py`) | (in `cli_test.py`) | stdout by default; atomic file write with `--output` |
+| Output Writer (stdout/file) | (integrated in `__main__.py`) | `tests/main_test.py` | stdout by default; atomic file write with `--output` |
+| Integration (run pipeline) | `o2cfg/__main__.py`   | `tests/main_test.py`   | Full CLI run with mocked discovery       |
 
 ---
 

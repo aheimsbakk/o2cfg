@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.1.0] - 2026-07-08
+
+- **why:** Fix blueprint deviations, implement missing security guards, and add comprehensive test suite
+- **model:** qwen/qwen-plus
+- **tags:** blueprint-compliance, security, tests
+
+### Fixed
+
+- Verbosity default now starts at `warning` (level 1) instead of `error` (`o2cfg/cli.py`, `o2cfg/__main__.py`)
+- Non-auth API failures (timeout, unreachable, non-200, invalid JSON) now exit with code 1 instead of 0 (`o2cfg/__main__.py`)
+- Output JSON now uses compact format with trailing newline (`o2cfg/__main__.py`)
+
+### Added
+
+- URL scheme validation: only `http` and `https` are accepted; other schemes raise `ValueError` (`o2cfg/config.py`)
+- Path traversal guard: output paths are resolved via `os.path.realpath` before writing (`o2cfg/__main__.py`)
+- Unhandled exception handler: top-level try/except in `run()` logs stack trace at debug level, plain message otherwise (`o2cfg/__main__.py`)
+- 126 pytest tests covering CLI parsing, config resolution, HTTP client, model filtering, model mapping, and integration (`tests/`)
+
+### Changed
+
+- `o2cfg/__main__.py` — split `run()` into `run()` (wrapper) and `_run()` (implementation) for exception handling
+
 ## [0.0.0] - 2026-07-08
 
 - **why:** Initial project scaffolding with architecture docs and README
