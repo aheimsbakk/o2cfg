@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.0] - 2026-07-08
+
+- **why:** Align output with opencode schema (provider nesting), remove null limit fields, and switch to pretty-printed JSON
+- **model:** qwen-3.6-think-coding
+- **tags:** output-format, blueprint-compliance
+
+### Fixed
+
+- Provider entry now nested under `"provider"` key to match the opencode JSON schema (`o2cfg/__main__.py`)
+- `limit` field omitted from model entries when both context and output are null with no CLI override (`o2cfg/mapper.py`)
+
+### Changed
+
+- JSON output switched from compact format to pretty-printed with indent 2 (`o2cfg/__main__.py`)
+
 ## [0.1.0] - 2026-07-08
 
 - **why:** Fix blueprint deviations, implement missing security guards, and add comprehensive test suite

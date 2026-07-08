@@ -1,2 +1,2 @@
-(A) 2026-07-08 Remove limit field from output when context/output limits are null and no CLI override is set @backend +blueprint-compliance
-(A) 2026-07-08 Switch JSON output from compact to pretty-printed with indent 2 @backend +blueprint-compliance
+x 2026-07-08 2026-07-08 Remove limit field from output when context/output limits are null and no CLI override is set @backend +blueprint-compliance
+x 2026-07-08 2026-07-08 Switch JSON output from compact to pretty-printed with indent 2 @backend +blueprint-compliance

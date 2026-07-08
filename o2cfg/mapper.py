@@ -63,8 +63,9 @@ def map_model(
     Returns
     -------
     dict[str, Any]
-        A dict matching the opencode model schema:
-        ``{"name": str, "limit": {"context": int|None, "output": int|None}}``
+        A dict matching the opencode model schema. Always includes ``name``.
+        Includes ``limit`` only when at least one of ``context`` or ``output``
+        is non-null; otherwise the ``limit`` key is omitted entirely.
 
     Raises
     ------
@@ -85,13 +86,16 @@ def map_model(
     if output is None:
         output = output_limit
 
-    return {
-        "name": model_id,
-        "limit": {
+    result: dict[str, Any] = {"name": model_id}
+
+    # Only include "limit" when at least one value is non-null.
+    if context is not None or output is not None:
+        result["limit"] = {
             "context": context,
             "output": output,
-        },
-    }
+        }
+
+    return result
 
 
 def map_models(

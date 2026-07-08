@@ -56,10 +56,6 @@ def build_config_document(
     dict[str, Any]
         The configuration document ready for serialization.
     """
-    document: dict[str, Any] = {
-        "$schema": "https://opencode.ai/config.json",
-    }
-
     provider_entry: dict[str, Any] = {
         "name": settings.provider_name,
         "npm": settings.provider_npm,
@@ -72,10 +68,16 @@ def build_config_document(
     if settings.api_key:
         provider_entry["options"]["apiKey"] = settings.api_key
 
-    # Use provider_name as the key in the top-level document
-    # Replace spaces with hyphens for a valid JSON key
+    # Use provider_name as the key inside the "provider" object.
+    # Replace spaces with hyphens for a valid JSON key.
     key = settings.provider_name.lower().replace(" ", "-")
-    document[key] = provider_entry
+
+    document: dict[str, Any] = {
+        "$schema": "https://opencode.ai/config.json",
+        "provider": {
+            key: provider_entry,
+        },
+    }
 
     return document
 
@@ -98,7 +100,7 @@ def write_output(document: dict[str, Any], output_file_path: str | None) -> None
     OSError
         If the file cannot be written.
     """
-    json_str = json.dumps(document, separators=(",", ": ")) + "\n"
+    json_str = json.dumps(document, indent=2) + "\n"
 
     if output_file_path is None:
         sys.stdout.write(json_str)

@@ -46,12 +46,11 @@ class TestExtractLimit:
 class TestMapModel:
     """Test single model mapping."""
 
-    def test_minimal_model(self):
+    def test_minimal_model_no_limit(self):
         model = {"id": "gpt-4o", "object": "model", "owned_by": "openai"}
         result = map_model(model)
         assert result["name"] == "gpt-4o"
-        assert result["limit"]["context"] is None
-        assert result["limit"]["output"] is None
+        assert "limit" not in result
 
     def test_model_with_limits(self):
         model = {
@@ -89,6 +88,22 @@ class TestMapModel:
         result = map_model(model, context_limit=50000, output_limit=10000)
         assert result["limit"]["context"] == 128000
         assert result["limit"]["output"] == 4096
+
+    def test_limit_included_when_only_context_set(self):
+        model = {"id": "basic-model"}
+        result = map_model(model, context_limit=50000)
+        assert result["name"] == "basic-model"
+        assert "limit" in result
+        assert result["limit"]["context"] == 50000
+        assert result["limit"]["output"] is None
+
+    def test_limit_included_when_only_output_set(self):
+        model = {"id": "basic-model"}
+        result = map_model(model, output_limit=10000)
+        assert result["name"] == "basic-model"
+        assert "limit" in result
+        assert result["limit"]["context"] is None
+        assert result["limit"]["output"] == 10000
 
     def test_missing_id_raises(self):
         model = {"object": "model"}

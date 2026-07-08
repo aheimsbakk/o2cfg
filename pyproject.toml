@@ -1,6 +1,6 @@
 [project]
 name = "o2cfg"
-version = "0.1.0"
+version = "0.2.0"
 description = "Auto-discover OpenAI-compatible models and generate opencode.json provider configs."
 requires-python = ">=3.10"
 dependencies = []

@@ -29,8 +29,8 @@ class TestBuildConfigDocument:
         }
         doc = build_config_document(settings, models_map)
         assert doc["$schema"] == "https://opencode.ai/config.json"
-        assert "localhost" in doc
-        provider = doc["localhost"]
+        assert "provider" in doc
+        provider = doc["provider"]["localhost"]
         assert provider["name"] == "localhost"
         assert provider["npm"] == "@ai-sdk/openai-compatible"
         assert provider["options"]["baseURL"] == "http://localhost:8080/v1"
@@ -46,7 +46,8 @@ class TestBuildConfigDocument:
         )
         models_map = {}
         doc = build_config_document(settings, models_map)
-        provider = doc["my-provider"]
+        assert "provider" in doc
+        provider = doc["provider"]["my-provider"]
         assert provider["options"]["apiKey"] == "sk-test-123"
         assert provider["options"]["baseURL"] == "https://api.example.com/v1"
 
@@ -56,8 +57,9 @@ class TestBuildConfigDocument:
             provider_name="My Provider",
         )
         doc = build_config_document(settings, {})
-        assert "my-provider" in doc
-        assert "My Provider" not in doc
+        assert "provider" in doc
+        assert "my-provider" in doc["provider"]
+        assert "My Provider" not in doc["provider"]
 
 
 class TestWriteOutput:
@@ -147,10 +149,13 @@ class TestRun:
         assert code == 0
         with open(output_path) as f:
             doc = json.load(f)
-        assert "localhost" in doc
-        assert "gpt-4o" in doc["localhost"]["models"]
-        assert "gpt-3.5-turbo" in doc["localhost"]["models"]
-        assert doc["localhost"]["models"]["gpt-4o"]["limit"]["context"] == 128000
+        assert "localhost" in doc["provider"]
+        assert "gpt-4o" in doc["provider"]["localhost"]["models"]
+        assert "gpt-3.5-turbo" in doc["provider"]["localhost"]["models"]
+        assert (
+            doc["provider"]["localhost"]["models"]["gpt-4o"]["limit"]["context"]
+            == 128000
+        )
 
     def test_run_with_api_key_writes_to_output(
         self, monkeypatch, temp_output_dir, tmp_path
@@ -174,7 +179,7 @@ class TestRun:
         assert code == 0
         with open(output_path) as f:
             doc = json.load(f)
-        assert doc["localhost"]["options"]["apiKey"] == "sk-test-123"
+        assert doc["provider"]["localhost"]["options"]["apiKey"] == "sk-test-123"
 
     def test_run_stdout_output(self, monkeypatch, capsys):
         def mock_fetch(*args, **kwargs):
@@ -186,7 +191,7 @@ class TestRun:
         assert code == 0
         captured = capsys.readouterr()
         doc = json.loads(captured.out)
-        assert "localhost" in doc
+        assert "localhost" in doc["provider"]
 
     def test_run_with_discovery_failure_produces_empty_models(
         self, monkeypatch, temp_output_dir, tmp_path
@@ -231,7 +236,7 @@ class TestRun:
         assert code == 0
         with open(output_path) as f:
             doc = json.load(f)
-        models = doc["localhost"]["models"]
+        models = doc["provider"]["localhost"]["models"]
         assert "gpt-4o" in models
         assert "claude-3" in models
         assert "gpt-3.5-turbo" not in models
@@ -260,7 +265,7 @@ class TestRun:
         assert code == 0
         with open(output_path) as f:
             doc = json.load(f)
-        models = doc["localhost"]["models"]
+        models = doc["provider"]["localhost"]["models"]
         assert "gpt-4o" in models
         assert "claude-3" in models
         assert "gpt-3.5-turbo" not in models
@@ -289,8 +294,14 @@ class TestRun:
         assert code == 0
         with open(output_path) as f:
             doc = json.load(f)
-        assert doc["localhost"]["models"]["basic-model"]["limit"]["context"] == 100000
-        assert doc["localhost"]["models"]["basic-model"]["limit"]["output"] == 32000
+        assert (
+            doc["provider"]["localhost"]["models"]["basic-model"]["limit"]["context"]
+            == 100000
+        )
+        assert (
+            doc["provider"]["localhost"]["models"]["basic-model"]["limit"]["output"]
+            == 32000
+        )
 
     def test_run_invalid_timeout_exits_1(self, caplog):
         code = run(["--url", "http://localhost:8080/v1", "--timeout", "999"])
@@ -317,8 +328,8 @@ class TestRun:
         assert code == 0
         with open(output_path) as f:
             doc = json.load(f)
-        assert "my-custom-provider" in doc
-        assert doc["my-custom-provider"]["name"] == "My Custom Provider"
+        assert "my-custom-provider" in doc["provider"]
+        assert doc["provider"]["my-custom-provider"]["name"] == "My Custom Provider"
 
     def test_run_custom_provider_provider(self, monkeypatch, temp_output_dir, tmp_path):
         def mock_fetch(*args, **kwargs):
@@ -340,7 +351,7 @@ class TestRun:
         assert code == 0
         with open(output_path) as f:
             doc = json.load(f)
-        assert doc["localhost"]["npm"] == "custom-npm-package"
+        assert doc["provider"]["localhost"]["npm"] == "custom-npm-package"
 
     def test_run_discovery_error_non_auth_exits_1(
         self, monkeypatch, temp_output_dir, tmp_path
@@ -385,7 +396,7 @@ class TestRun:
         assert code == 0
         with open(output_path) as f:
             doc = json.load(f)
-        assert doc["localhost"]["models"] == {}
+        assert doc["provider"]["localhost"]["models"] == {}
 
     def test_run_unhandled_exception_exits_1(self, caplog):
         """Unhandled exceptions produce exit 1 with error message."""
