@@ -25,7 +25,7 @@ def setup_logging(verbosity: int) -> None:
         Integer level (0-3): 0=error, 1=warning, 2=info, 3=debug.
     """
     level_map = {
-        0: logging.ERROR,
+        0: logging.WARNING,
         1: logging.WARNING,
         2: logging.INFO,
         3: logging.DEBUG,

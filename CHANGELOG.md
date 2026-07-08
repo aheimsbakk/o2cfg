@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.2.1] - 2026-07-08
+
+- **why:** Verbosity default did not match the blueprint spec; no flags and -vv both produced debug output
+- **model:** qwen-3.6-think-coding
+- **tags:** verbosity, blueprint-compliance, bug-fix
+
+### Fixed
+
+- Default verbosity now maps to warning (no flags and -v both produce warning); -vv produces info; -vvv produces debug (`o2cfg/cli.py`, `o2cfg/__main__.py`)
+
 ## [0.2.0] - 2026-07-08
 
 - **why:** Align output with opencode schema (provider nesting), remove null limit fields, and switch to pretty-printed JSON

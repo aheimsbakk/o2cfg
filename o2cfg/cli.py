@@ -13,7 +13,7 @@ MIN_TIMEOUT = 1
 MAX_TIMEOUT = 300
 
 VERBOSITY_MAP = {
-    0: "error",
+    0: "warning",
     1: "warning",
     2: "info",
     3: "debug",
@@ -44,7 +44,7 @@ def build_parser() -> argparse.ArgumentParser:
         "-v",
         "--verbosity",
         action="count",
-        default=1,
+        default=0,
         help="Set verbosity: -v (warning), -vv (info), -vvv (debug). Default: warning.",
     )
 
@@ -150,10 +150,14 @@ def resolve_verbosity(args) -> int:
     """Return an integer verbosity level (0-3) from parsed args.
 
     The ``-v`` / ``--verbosity`` flag uses ``action="count"``, so each
-    occurrence increments the counter.  Values above 3 are capped at 3.
+    occurrence increments the counter.  The default (0) maps to warning (1)
+    so that no flags and a single ``-v`` both produce warning-level output.
+    Values above 3 are capped at 3.
     """
-    level = min(args.verbosity, 3)
-    return level
+    level = args.verbosity
+    if level == 0:
+        return 1
+    return min(level, 3)
 
 
 def get_verbosity_label(level: int) -> str:

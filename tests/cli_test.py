@@ -106,13 +106,13 @@ class TestParseArgs:
         args = parse_args(["--url", "http://localhost:8080/v1"])
         assert args.url == "http://localhost:8080/v1"
 
-    def test_default_verbosity_is_one(self):
+    def test_default_verbosity_is_zero(self):
         args = parse_args(["--url", "http://localhost:8080/v1"])
-        assert args.verbosity == 1
+        assert args.verbosity == 0
 
     def test_multiple_v_flags_raw_value(self):
         args = parse_args(["-vvvv", "--url", "http://localhost:8080/v1"])
-        assert args.verbosity == 5  # default=1 + 4 v flags; resolve_verbosity caps at 3
+        assert args.verbosity == 4  # default=0 + 4 v flags; resolve_verbosity caps at 3
 
     def test_multiple_v_flags_resolved(self):
         args = parse_args(["-vvvv", "--url", "http://localhost:8080/v1"])
@@ -122,7 +122,11 @@ class TestParseArgs:
 class TestResolveVerbosity:
     """Test verbosity level resolution."""
 
-    def test_warning_level(self):
+    def test_default_is_warning(self):
+        args = type("Args", (), {"verbosity": 0})()
+        assert resolve_verbosity(args) == 1
+
+    def test_single_v_is_warning(self):
         args = type("Args", (), {"verbosity": 1})()
         assert resolve_verbosity(args) == 1
 
@@ -138,16 +142,12 @@ class TestResolveVerbosity:
         args = type("Args", (), {"verbosity": 10})()
         assert resolve_verbosity(args) == 3
 
-    def test_zero_is_error(self):
-        args = type("Args", (), {"verbosity": 0})()
-        assert resolve_verbosity(args) == 0
-
 
 class TestGetVerbosityLabel:
     """Test verbosity label resolution."""
 
-    def test_error(self):
-        assert get_verbosity_label(0) == "error"
+    def test_default_is_warning(self):
+        assert get_verbosity_label(0) == "warning"
 
     def test_warning(self):
         assert get_verbosity_label(1) == "warning"
