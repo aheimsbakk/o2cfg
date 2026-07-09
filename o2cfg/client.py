@@ -72,6 +72,8 @@ def fetch_models(
             "Authorization header set (redacted: %s)",
             redact_api_key(req.get_header("Authorization")),
         )
+    else:
+        logger.info("No API key provided; sending request without authorization")
 
     try:
         with urllib.request.urlopen(req, timeout=timeout) as response:

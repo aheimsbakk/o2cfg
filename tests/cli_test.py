@@ -138,13 +138,19 @@ class TestParseArgs:
 class TestResolveVerbosity:
     """Test verbosity level resolution."""
 
-    def test_default_is_warning(self):
+    def test_default_is_error(self):
         args = type("Args", (), {"verbosity": 0})()
-        assert resolve_verbosity(args) == 1
+        assert resolve_verbosity(args) == 0
 
     def test_single_v_is_warning(self):
         args = type("Args", (), {"verbosity": 1})()
         assert resolve_verbosity(args) == 1
+
+    def test_single_v_is_not_default(self):
+        """No flags (0) and -v (1) produce different levels."""
+        args_no_flag = type("Args", (), {"verbosity": 0})()
+        args_v = type("Args", (), {"verbosity": 1})()
+        assert resolve_verbosity(args_no_flag) != resolve_verbosity(args_v)
 
     def test_info_level(self):
         args = type("Args", (), {"verbosity": 2})()
@@ -162,8 +168,8 @@ class TestResolveVerbosity:
 class TestGetVerbosityLabel:
     """Test verbosity label resolution."""
 
-    def test_default_is_warning(self):
-        assert get_verbosity_label(0) == "warning"
+    def test_default_is_error(self):
+        assert get_verbosity_label(0) == "error"
 
     def test_warning(self):
         assert get_verbosity_label(1) == "warning"

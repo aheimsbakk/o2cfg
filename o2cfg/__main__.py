@@ -21,7 +21,7 @@ def setup_logging(verbosity: int) -> None:
         Integer level (0-3): 0=error, 1=warning, 2=info, 3=debug.
     """
     level_map = {
-        0: logging.WARNING,
+        0: logging.ERROR,
         1: logging.WARNING,
         2: logging.INFO,
         3: logging.DEBUG,
@@ -115,11 +115,23 @@ def _run(argv: list[str] | None = None) -> int:
             return 1
 
     # Filter models
+    if settings.denylist or settings.allowlist is not None:
+        logger.info(
+            "Applying filters: denylist=%s, allowlist=%s",
+            settings.denylist,
+            settings.allowlist,
+        )
     filtered = filter_models(
         models_list,
         denylist=settings.denylist,
         allowlist=settings.allowlist,
     )
+    if settings.denylist or settings.allowlist is not None:
+        removed = len(models_list) - len(filtered)
+        if removed > 0:
+            logger.info("Removed %d models after filtering", removed)
+        if not filtered:
+            logger.info("No models remain after filtering")
 
     # Map models to opencode schema
     models_map = map_models(
@@ -140,6 +152,11 @@ def _run(argv: list[str] | None = None) -> int:
     except OSError as exc:
         logger.error("Failed to write output: %s", exc)
         return 1
+
+    if settings.output_file_path:
+        logger.info("Config written to %s", settings.output_file_path)
+    else:
+        logger.info("Config written to stdout")
 
     return 0
 

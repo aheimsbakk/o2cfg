@@ -132,6 +132,7 @@ def resolve_settings(
     # Derive provider name if not explicitly provided
     if not provider_name:
         provider_name = derive_provider_name(base_url)
+        logger.debug("Auto-resolved provider name: %s", provider_name)
 
     # Parse allowlist and denylist
     allow_list = _parse_comma_list(allowlist)
