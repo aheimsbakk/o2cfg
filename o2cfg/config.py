@@ -1,14 +1,13 @@
 """Config Resolver — merges CLI args + environment variables into resolved settings."""
 
 import logging
-import re
 import urllib.parse
 from typing import Optional
 
+from o2cfg.provider_name import derive_provider_name
+
 
 logger = logging.getLogger(__name__)
-
-DEFAULT_PROVIDER_NAME = "OpenAI-compatible"
 
 
 class Settings:
@@ -66,52 +65,6 @@ def _parse_comma_list(value: Optional[str]) -> Optional[list[str]]:
     parts = [p.strip() for p in value.split(",")]
     result = [p for p in parts if p]
     return result if result else []
-
-
-def _derive_provider_name(base_url: str) -> str:
-    """Derive a provider display name from the base URL hostname.
-
-    Resolution chain:
-    1. Parse the hostname from *base_url* (strip scheme and port).
-    2. Split into labels by dot.
-    3. Take the second-to-last label (the domain name before the TLD).
-       If there is only one label, use it as-is.
-    4. Lowercase it.
-    5. Replace hyphens and underscores with spaces for readability.
-    6. If the hostname is empty or unparseable, return the hardcoded default.
-    """
-    try:
-        # Strip scheme
-        url = base_url
-        if "://" in url:
-            url = url.split("://", 1)[1]
-        # Strip path
-        if "/" in url:
-            url = url.split("/", 1)[0]
-        # Strip port
-        if ":" in url:
-            url = url.rsplit(":", 1)[0]
-
-        if not url:
-            return DEFAULT_PROVIDER_NAME
-
-        # Split into labels
-        labels = url.split(".")
-
-        # Take the second-to-last label, or the only label if there's just one
-        if len(labels) >= 2:
-            hostname = labels[-2]
-        else:
-            hostname = labels[0]
-
-        if not hostname:
-            return DEFAULT_PROVIDER_NAME
-
-        # Lowercase and replace separators
-        name = hostname.lower().replace("-", " ").replace("_", " ")
-        return name
-    except Exception:
-        return DEFAULT_PROVIDER_NAME
 
 
 def resolve_settings(
@@ -178,7 +131,7 @@ def resolve_settings(
 
     # Derive provider name if not explicitly provided
     if not provider_name:
-        provider_name = _derive_provider_name(base_url)
+        provider_name = derive_provider_name(base_url)
 
     # Parse allowlist and denylist
     allow_list = _parse_comma_list(allowlist)

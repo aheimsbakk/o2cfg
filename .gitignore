@@ -49,3 +49,9 @@ htmlcov/
 
 # Dynamic runtime artifacts
 .env
+
+# Lock files
+uv.lock
+
+# Ruff cache
+.ruff_cache/

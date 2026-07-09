@@ -5,7 +5,7 @@ import os
 import sys
 
 
-VERSION = "0.1.0"
+VERSION = "0.2.1"
 
 DEFAULT_PROVIDER = "@ai-sdk/openai-compatible"
 DEFAULT_TIMEOUT = 30
