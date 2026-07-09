@@ -103,6 +103,7 @@ def _write_file(json_str: str, output_file_path: str) -> None:
     resolved = os.path.realpath(output_file_path)
     parent = os.path.dirname(resolved)
     if parent and not os.path.isdir(parent):
+        logger.warning("Output directory does not exist: %s", parent)
         raise OSError(f"Output directory does not exist: {parent}")
 
     dir_name = os.path.dirname(output_file_path) or "."

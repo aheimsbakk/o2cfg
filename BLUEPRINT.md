@@ -85,7 +85,7 @@ o2cfg [options]
 |-------|-------------------------|------|----------|-----------------|--------------------------------------------------|
 | `-h`  | `--help`                | flag | N        | (auto)          | Show help message and exit.                      |
 | `-V`  | `--version`             | flag | N        | (auto)          | Print version and exit.                          |
-| `-v, -vv, -vvv` | `--verbosity`   | level| N        | `warning`       | Set verbosity: warning (1), info (2), debug (3). Critical is implicit on fatal errors. |
+| `-v, -vv, -vvv` | `--verbosity`   | level| N        | `error`         | Set verbosity: no flag (error), -v (warning), -vv (info), -vvv (debug). |
 | `-u`  | `--url [URL]`           | url  | Y*       | env `OPENAI_BASE_URL` | Base URL of the OpenAI-compatible endpoint (e.g. `http://localhost:8080/v1`). The program appends `/v1/models` automatically. If the supplied URL already ends with `/v1`, it is used as-is. |
 | `-k`  | `--api-key [KEY]`       | str  | N        | env `OPENAI_API_KEY` | Bearer token for authenticated endpoints. Discovery always runs — if no key is given, request goes to the API without an Authorization header (many self-hosted servers do not require auth for model listing). Written to `.provider.<name>.options.apiKey` in the output when provided. |
 | `-o`  | `--output [FILE]`       | path | N        | stdout         | File path to write the generated config. When omitted, the formatted JSON is printed to stdout so it can be viewed or piped. Omitting this flag means no file is written to disk. |
@@ -103,9 +103,10 @@ o2cfg [options]
 
 | Flag  | Level   | Output                                    |
 |-------|---------|-------------------------------------------|
-| (none) / `-v`    | warning | Warnings and errors only                   |
-| `-vv` | info    | Warnings, errors, and operational progress|
-| `-vvv`| debug   | Full request/response logging              |
+| (none)    | error    | Errors only                                |
+| `-v`      | warning  | Warnings and errors only                   |
+| `-vv`     | info     | Warnings, errors, and operational progress |
+| `-vvv`    | debug    | Full request/response logging              |
 
 ---
 

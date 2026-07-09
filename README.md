@@ -118,7 +118,7 @@ All flags are listed below. When a flag has environment variable support, that i
 | `--model-output-limit <TOKENS>`  | `-O`   | No             | Global override for output token limit when the API returns no value. |
 | `--allowlist <MODELS>`           | `-a`   | No             | Comma-separated list of model IDs to keep. Discovered models not in this list are excluded from the result. |
 | `--denylist <MODELS>`            | `-d`   | No             | Comma-separated list of model IDs to exclude, even if they were discovered. |
-| `-v, -vv, -vvv`                  |        | No             | Verbosity: `-v` (warning), `-vv` (info), `-vvv` (debug). Default: warning. |
+| `-v, -vv, -vvv`                  |        | No             | Verbosity: no flag (error), `-v` (warning), `-vv` (info), `-vvv` (debug). Default: error. |
 | `-V`                             |        | No             | Print version and exit. |
 
 \* `--url` can be replaced by the `OPENAI_BASE_URL` environment variable.
