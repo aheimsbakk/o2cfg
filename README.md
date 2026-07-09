@@ -1,11 +1,8 @@
-> [!WARNING]
-> In implementation!
-> - Test of Qwen 35B A3B run locally.
-> - General config for architecture, coding config for coding.
-
 # o2cfg
 
 Auto-discover models from OpenAI-compatible API endpoints and generate opencode provider configurations.
+
+Source: https://github.com/aheimsbakk/o2cfg
 
 ## What it does
 
@@ -13,26 +10,27 @@ Auto-discover models from OpenAI-compatible API endpoints and generate opencode 
 - Writes a valid `opencode.json` provider block with your connection settings plus discovered models
 - Sends output to stdout by default so you can review or pipe it to a file
 
-## Install and use with uvx
+## Quick start
 
-The fastest way to run o2cfg requires no installation:
+Run o2cfg directly from the repository with `uvx` — no installation needed:
 
 ```bash
-uvx o2cfg --url http://localhost:8080/v1 --api-key my-api-key -o opencode.json
+uvx --from git+https://github.com/aheimsbakk/o2cfg.git o2cfg --url http://localhost:8080/v1 -o opencode.json
 ```
 
-This downloads and runs the tool in an isolated environment. The result appears in `opencode.json`.
+This downloads the repo and runs the tool in an isolated environment. The result appears in `opencode.json`.
 
 ## Install from source
 
-Build from source using uv:
+Clone the repository and install with uv:
 
 ```bash
+git clone https://github.com/aheimsbakk/o2cfg.git
+cd o2cfg
 uv venv
 source .venv/bin/activate      # Linux / macOS
 # .venv\Scripts\activate       # Windows
 uv pip install -e ".[test]"
-o2cfg --url http://localhost:8080/v1 --api-key my-api-key
 ```
 
 ## Run it
@@ -114,11 +112,14 @@ All flags are listed below. When a flag has environment variable support, that i
 | `--api-key <KEY>`                | `-k`   | No             | Bearer token for authenticated endpoints. Discovery runs regardless — if no key is present, o2cfg calls `/v1/models` without an Authorization header. Written to `.options.apiKey` in the output when provided. |
 | `--output <PATH>`                | `-o`   | No             | File path to write the result. If omitted, the JSON is sent to stdout so you can view it or pipe it. |
 | `--provider-name <NAME>`         | `-n`   | No             | Display name for the provider section. If omitted, o2cfg derives it from the URL hostname. |
+| `--provider-provider <PKG>`      | `-p`   | No             | npm package name for the provider adapter. Default: `@ai-sdk/openai-compatible`. |
 | `--timeout <SECONDS>`            | `-t`   | No             | Request timeout in seconds (1–300). Defaults to 30. |
 | `--model-context-limit <TOKENS>` | `-C`   | No             | Global override for context token limit when the API returns no value. |
 | `--model-output-limit <TOKENS>`  | `-O`   | No             | Global override for output token limit when the API returns no value. |
 | `--allowlist <MODELS>`           | `-a`   | No             | Comma-separated list of model IDs to keep. Discovered models not in this list are excluded from the result. |
 | `--denylist <MODELS>`            | `-d`   | No             | Comma-separated list of model IDs to exclude, even if they were discovered. |
+| `-v, -vv, -vvv`                  |        | No             | Verbosity: `-v` (warning), `-vv` (info), `-vvv` (debug). Default: warning. |
+| `-V`                             |        | No             | Print version and exit. |
 
 \* `--url` can be replaced by the `OPENAI_BASE_URL` environment variable.
 
