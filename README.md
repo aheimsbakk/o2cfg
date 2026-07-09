@@ -134,37 +134,9 @@ You can set these instead of using command-line flags:
 
 \* When neither flag nor environment variable supplies a URL, the tool prints an error message and exits with code 2.
 
-## Output formats
+## Output format
 
-The tool writes standard opencode provider configuration:
-
-### Without API key (unauthenticated endpoints)
-
-```json
-{
-  "$schema": "https://opencode.ai/config.json",
-  "localhost": {
-    "name": "Llama.cpp",
-    "npm": "@ai-sdk/openai-compatible",
-    "options": {
-      "baseURL": "http://localhost:8080/v1"
-    },
-    "models": {
-      "qwen-3.6": {
-        "name": "qwen-3.6",
-        "limit": {
-          "context": 256000,
-          "output": 64000
-        }
-      }
-    }
-  }
-}
-```
-
-Many self-hosted servers do not require authentication for model listing. Discovery still runs and the models are populated. If discovery fails, `models` will be empty. Add `--api-key` or set `OPENAI_API_KEY` only if your endpoint requires an Authorization header.
-
-### With API key (authenticated endpoints)
+Example output with an API key:
 
 ```json
 {
