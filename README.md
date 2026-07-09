@@ -141,19 +141,21 @@ Example output with an API key:
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
-  "myprovider": {
-    "name": "My Provider",
-    "npm": "@ai-sdk/openai-compatible",
-    "options": {
-      "apiKey": "sk-prod-abc123",
-      "baseURL": "https://api.example.com/v1"
-    },
-    "models": {
-      "gpt-4o": {
-        "name": "gpt-4o",
-        "limit": {
-          "context": 128000,
-          "output": 4096
+  "provider": {
+    "my-provider": {
+      "name": "My Provider",
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "apiKey": "sk-prod-abc123",
+        "baseURL": "https://api.example.com/v1"
+      },
+      "models": {
+        "gpt-4o": {
+          "name": "gpt-4o",
+          "limit": {
+            "context": 128000,
+            "output": 4096
+          }
         }
       }
     }

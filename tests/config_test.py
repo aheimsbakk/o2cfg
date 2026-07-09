@@ -5,9 +5,9 @@ import pytest
 from o2cfg.config import (
     resolve_settings,
     Settings,
-    _derive_provider_name,
     _parse_comma_list,
 )
+from o2cfg.provider_name import derive_provider_name
 
 
 class TestParseCommaList:
@@ -38,28 +38,28 @@ class TestDeriveProviderName:
     """Test provider name derivation from URL."""
 
     def test_localhost(self):
-        assert _derive_provider_name("http://localhost:8080/v1") == "localhost"
+        assert derive_provider_name("http://localhost:8080/v1") == "localhost"
 
     def test_subdomain(self):
-        assert _derive_provider_name("https://api.anthropic.com/v1/") == "anthropic"
+        assert derive_provider_name("https://api.anthropic.com/v1/") == "anthropic"
 
     def test_two_labels(self):
-        assert _derive_provider_name("http://vllm.internal:8000/v1") == "vllm"
+        assert derive_provider_name("http://vllm.internal:8000/v1") == "vllm"
 
     def test_hyphens_in_second_to_last_label(self):
-        assert _derive_provider_name("http://my-server.com/v1") == "my server"
+        assert derive_provider_name("http://my-server.com/v1") == "my server"
 
     def test_underscores_in_second_to_last_label(self):
-        assert _derive_provider_name("http://my_server.com/v1") == "my server"
+        assert derive_provider_name("http://my_server.com/v1") == "my server"
 
     def test_empty_hostname(self):
-        assert _derive_provider_name("http:///v1") == "OpenAI-compatible"
+        assert derive_provider_name("http:///v1") == "OpenAI-compatible"
 
     def test_no_scheme(self):
-        assert _derive_provider_name("localhost:8080/v1") == "localhost"
+        assert derive_provider_name("localhost:8080/v1") == "localhost"
 
     def test_default_fallback_on_error(self):
-        assert _derive_provider_name("") == "OpenAI-compatible"
+        assert derive_provider_name("") == "OpenAI-compatible"
 
 
 class TestResolveSettings:

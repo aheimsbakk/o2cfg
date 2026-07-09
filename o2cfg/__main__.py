@@ -1,19 +1,15 @@
 """Entry point for o2cfg — argparse dispatch, discovery pipeline, and output."""
 
-import argparse
-import json
 import logging
-import os
 import sys
-import tempfile
 from typing import Any
 
-from o2cfg import __version__
-from o2cfg.cli import parse_args, resolve_verbosity, get_verbosity_label
-from o2cfg.config import resolve_settings, Settings
-from o2cfg.client import fetch_models, DiscoveryError
+from o2cfg.cli import parse_args, resolve_verbosity
+from o2cfg.client import DiscoveryError, fetch_models
+from o2cfg.config import resolve_settings
 from o2cfg.filter import filter_models
 from o2cfg.mapper import map_models
+from o2cfg.output import build_config_document, write_output
 
 
 def setup_logging(verbosity: int) -> None:
@@ -36,96 +32,6 @@ def setup_logging(verbosity: int) -> None:
         format="%(levelname)s: %(message)s",
         stream=sys.stderr,
     )
-
-
-def build_config_document(
-    settings: Settings,
-    models_map: dict[str, dict[str, Any]],
-) -> dict[str, Any]:
-    """Build the final opencode configuration document.
-
-    Parameters
-    ----------
-    settings : Settings
-        Resolved configuration.
-    models_map : dict[str, dict[str, Any]]
-        Mapped models from discovery.
-
-    Returns
-    -------
-    dict[str, Any]
-        The configuration document ready for serialization.
-    """
-    provider_entry: dict[str, Any] = {
-        "name": settings.provider_name,
-        "npm": settings.provider_npm,
-        "options": {
-            "baseURL": settings.base_url,
-        },
-        "models": models_map,
-    }
-
-    if settings.api_key:
-        provider_entry["options"]["apiKey"] = settings.api_key
-
-    # Use provider_name as the key inside the "provider" object.
-    # Replace spaces with hyphens for a valid JSON key.
-    key = settings.provider_name.lower().replace(" ", "-")
-
-    document: dict[str, Any] = {
-        "$schema": "https://opencode.ai/config.json",
-        "provider": {
-            key: provider_entry,
-        },
-    }
-
-    return document
-
-
-def write_output(document: dict[str, Any], output_file_path: str | None) -> None:
-    """Write the configuration document to stdout or a file.
-
-    When *output_file_path* is ``None``, the JSON is printed to stdout.
-    When a path is given, the file is written atomically (tempfile + rename).
-
-    Parameters
-    ----------
-    document : dict[str, Any]
-        The configuration document.
-    output_file_path : str | None
-        File path to write to, or ``None`` for stdout.
-
-    Raises
-    ------
-    OSError
-        If the file cannot be written.
-    """
-    json_str = json.dumps(document, indent=2) + "\n"
-
-    if output_file_path is None:
-        sys.stdout.write(json_str)
-        sys.stdout.flush()
-    else:
-        # Resolve and validate output path to prevent path traversal
-        resolved = os.path.realpath(output_file_path)
-        parent = os.path.dirname(resolved)
-        if parent and not os.path.isdir(parent):
-            raise OSError(f"Output directory does not exist: {parent}")
-
-        # Atomic write: tempfile + rename
-        dir_name = os.path.dirname(output_file_path) or "."
-        fd, tmp_path = tempfile.mkstemp(dir=dir_name, suffix=".tmp")
-        try:
-            with os.fdopen(fd, "w") as f:
-                f.write(json_str)
-            os.replace(tmp_path, output_file_path)
-        except Exception:
-            # Clean up temp file on failure
-            try:
-                os.unlink(tmp_path)
-            except OSError:
-                pass
-            raise
 
 
 def run(argv: list[str] | None = None) -> int:

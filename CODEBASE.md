@@ -16,12 +16,14 @@ o2cfg/
 ├── README.md               # usage, install, quick start
 ├── o2cfg/                  # source package
 │   ├── __init__.py         # package marker, version string
-│   ├── __main__.py         # entry point: argparse dispatch, discovery pipeline, output writer
+│   ├── __main__.py         # entry point: argparse dispatch, discovery pipeline
 │   ├── cli.py              # argparse setup, argument definitions, verbosity resolution
 │   ├── config.py           # Config Resolver — merges CLI args + env vars, provides resolved settings object
 │   ├── client.py           # OpenAI Client — HTTP GET /v1/models, timeout, auth header, error handling
 │   ├── filter.py           # Model Filter — apply denylist first, then allowlist; no-op when both absent/empty
-│   └── mapper.py           # Model Mapper — transform API model objects to opencode schema + auto-discovery fallbacks
+│   ├── mapper.py           # Model Mapper — transform API model objects to opencode schema + auto-discovery fallbacks
+│   ├── output.py           # Output Writer — build config documents and write to stdout or file atomically
+│   └── provider_name.py    # Provider Name — derive display name from base URL hostname
 ├── tests/                  # test suite
 │   ├── __init__.py
 │   ├── conftest.py         # shared fixtures — mocked HTTP responses, sample model payloads
@@ -30,7 +32,11 @@ o2cfg/
 │   ├── client_test.py      # OpenAI Client — timeout, auth header injection, HTTP error codes, malformed JSON
 │   ├── filter_test.py      # Model Filter — denylist removes entries, allowlist narrows to subset, both combined, empty/no-op cases
 │   ├── mapper_test.py      # Model Mapper — id/name mapping, context/output extracted or null + override path
-│   └── main_test.py        # Integration tests — full run pipeline, output writing, mocked discovery
+│   ├── main_config_doc_test.py  # Integration: build_config_document tests
+│   ├── main_output_test.py    # Integration: write_output stdout and file tests
+│   ├── main_run_basic_test.py # Integration: basic run with mocked discovery
+│   ├── main_run_errors_test.py # Integration: error handling and discovery failure tests
+│   └── main_run_test.py       # Integration: run overrides and custom provider tests
 └── scripts/
     └── verify_codebase_sync.sh  # sync verification for CODEBASE.md physical paths
 ```
@@ -43,11 +49,13 @@ o2cfg/
 |---------------------------|------------------------|---------------------------|------------------------------------------|
 | CLI Layer                 | `o2cfg/__main__.py`, `o2cfg/cli.py`          | `tests/cli_test.py`    | Single invocation; argparse-driven       |
 | Config Resolver           | `o2cfg/config.py`      | `tests/config_test.py`   | Provider name fallback, optional args    |
+| Provider Name Derivation  | `o2cfg/provider_name.py` | `tests/config_test.py`  | URL hostname to display name conversion  |
 | OpenAI Client             | `o2cfg/client.py`       | `tests/client_test.py`  | Timeout, Bearer auth, error boundaries   |
 | Model Filter              | `o2cfg/filter.py`       | `tests/filter_test.py`  | Denylist first, then allowlist           |
 | Model Mapper              | `o2cfg/mapper.py`       | `tests/mapper_test.py`  | Schema transformation, auto-discovery    |
-| Output Writer (stdout/file) | (integrated in `__main__.py`) | `tests/main_test.py` | stdout by default; atomic file write with `--output` |
-| Integration (run pipeline) | `o2cfg/__main__.py`   | `tests/main_test.py`   | Full CLI run with mocked discovery       |
+| Output Writer (stdout/file) | `o2cfg/output.py`        | `tests/main_output_test.py` | stdout by default; atomic file write with `--output` |
+| Config Document Builder   | `o2cfg/output.py`        | `tests/main_config_doc_test.py` | Build opencode JSON structure |
+| Integration (run pipeline) | `o2cfg/__main__.py`   | `tests/main_run_*.py`   | Full CLI run with mocked discovery       |
 
 ---
 

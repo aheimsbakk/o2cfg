@@ -163,10 +163,3 @@ def mock_urlopen_invalid_json():
 def temp_output_dir(tmp_path):
     """Provide a temporary directory for output file tests."""
     return str(tmp_path)
-
-
-@pytest.fixture
-def captured_stderr(capfd):
-    """Capture stderr output and return captured text."""
-    yield
-    return capfd.readouterr().err
