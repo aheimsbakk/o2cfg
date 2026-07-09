@@ -28,7 +28,7 @@
 ## [0.1.0] - 2026-07-08
 
 - **why:** Fix blueprint deviations, implement missing security guards, and add comprehensive test suite
-- **model:** qwen/qwen-plus
+- **model:** qwen-3.6-think-coding
 - **tags:** blueprint-compliance, security, tests
 
 ### Fixed
@@ -51,7 +51,7 @@
 ## [0.0.0] - 2026-07-08
 
 - **why:** Initial project scaffolding with architecture docs and README
-- **model:** qwen/qwen-plus
+- **model:** qwen-3.6-think-general
 - **tags:** scaffold, blueprints, readme, documentation
 
 ### Added
