@@ -25,9 +25,9 @@ Config Resolver (--args + environment variables -> resolved settings)
 OpenAI Client (HTTP client with timeout, auth header, error handling)
   |
   |-- GET /v1/models --> raw model list payload
-  |
-  v
-Model Filter (apply denylist first, then allowlist to narrow the set; no-op when both absent or empty)
+   |
+   v
+  Model Filter (apply denylist first, then allowlist to narrow the set; patterns use fnmatch glob syntax; no-op when both absent or empty)
   |
   v
 Model Mapper (transform filtered API model objects into opencode schema format)
@@ -51,7 +51,7 @@ Output Writer (serialize resolved config to stdout or file path)
    - If `api_key` is provided, sets `Authorization: Bearer <key>` header.
    - If `api_key` is not provided, sends the request with no Authorization header. Many OpenAI-compatible endpoints (self-hosted on private networks) accept unauthenticated calls to the models list endpoint. The discovery attempt is best-effort; network or auth failures produce a warning and do not abort the run.
 5. **Response is parsed:** a JSON object containing `"data": [{ "id", "object", ... }]`.
-6. **Model Filter** applies denylist first, then allowlist, to the parsed model set. When neither flag is given all discovered models pass through unchanged. An empty allowlist results in zero models included (the output file has `"models": {}`).
+6. **Model Filter** applies denylist first, then allowlist, to the parsed model set. Each entry is treated as a glob pattern matched against model IDs using Unix shell-style wildcards (``*``, ``?``, ``[seq]``, ``[!seq]``). Strings without wildcards are exact matches. When neither flag is given all discovered models pass through unchanged. An empty allowlist results in zero models included (the output file has `"models": {}`).
 7. **Model Mapper** iterates each model and builds the opencode-per-model structure, extracting available context/output limit metadata if present (otherwise storing `null` for discovery via environment).
 8. **Output Writer** serializes the config document:
     - When `output_file_path` is null, write JSON to stdout directly (fd 1). No warnings are ever written to stdout — they go to stderr only so the two streams never mix.
@@ -94,8 +94,8 @@ o2cfg [options]
 | `-t`  | `--timeout [SECONDS]`              | int   | N        | `30`                   | HTTP request timeout in seconds (1-300).                                           |
 | `-C`  | `--model-context-limit [TOKENS]`   | int   | N        | null                   | Global override for context token limit when API returns no value.               |
 | `-O`  | `--model-output-limit [TOKENS]`    | int   | N        | null                   | Global override for output token limit when API returns no value.                |
-| `-a`  | `--allowlist [ID1,ID2,...]` | list  | N        | (all discovered)       | After discovery, keep only models whose IDs are in this comma-separated list.    |
-| `-d`  | `--denylist [ID1,ID2,...]`  | list  | N        | (none)                 | After discovery, remove models whose IDs are in this comma-separated list.       |
+| `-a`  | `--allowlist [ID1,ID2,...]` | list  | N        | (all discovered)       | After discovery, keep only models whose IDs match any comma-separated glob pattern (``*``, ``?``, ``[seq]``, ``[!seq]``).  For example, ``gpt-*`` matches ``gpt-4o`` and ``gpt-3.5-turbo``.    |
+| `-d`  | `--denylist [ID1,ID2,...]`  | list  | N        | (none)                 | After discovery, remove models whose IDs match any comma-separated glob pattern.  Strings without wildcards are treated as exact matches.    |
 
 \* Required unless the corresponding environment variable (`OPENAI_BASE_URL`) is set.
 

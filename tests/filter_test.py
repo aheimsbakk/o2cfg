@@ -78,3 +78,60 @@ class TestFilterModels:
         result = filter_models(models, denylist=["gpt-4o"])
         assert len(result) == 1
         assert "id" not in result[0]
+
+    # Glob pattern tests
+
+    def test_denylist_glob_star_prefix(self):
+        result = filter_models(SAMPLE_MODELS, denylist=["gpt-*"])
+        ids = {m["id"] for m in result}
+        assert ids == {"claude-3-opus", "llama-3"}
+
+    def test_denylist_glob_star_suffix(self):
+        result = filter_models(SAMPLE_MODELS, denylist=["*-opus"])
+        ids = {m["id"] for m in result}
+        assert ids == {"gpt-4o", "gpt-3.5-turbo", "llama-3"}
+
+    def test_denylist_glob_star_both_sides(self):
+        result = filter_models(SAMPLE_MODELS, denylist=["*3*"])
+        ids = {m["id"] for m in result}
+        assert ids == {"gpt-4o"}
+
+    def test_denylist_glob_question_mark(self):
+        result = filter_models(SAMPLE_MODELS, denylist=["gpt-4?"])
+        ids = {m["id"] for m in result}
+        assert ids == {"gpt-3.5-turbo", "claude-3-opus", "llama-3"}
+
+    def test_denylist_glob_char_class(self):
+        result = filter_models(SAMPLE_MODELS, denylist=["llama-[0-9]"])
+        ids = {m["id"] for m in result}
+        assert ids == {"gpt-4o", "gpt-3.5-turbo", "claude-3-opus"}
+
+    def test_allowlist_glob_star_prefix(self):
+        result = filter_models(SAMPLE_MODELS, allowlist=["gpt-*"])
+        ids = {m["id"] for m in result}
+        assert ids == {"gpt-4o", "gpt-3.5-turbo"}
+
+    def test_allowlist_multiple_glob_patterns(self):
+        result = filter_models(SAMPLE_MODELS, allowlist=["gpt-*", "llama-*"])
+        ids = {m["id"] for m in result}
+        assert ids == {"gpt-4o", "gpt-3.5-turbo", "llama-3"}
+
+    def test_allowlist_glob_no_match(self):
+        result = filter_models(SAMPLE_MODELS, allowlist=["mistral-*"])
+        assert result == []
+
+    def test_denylist_glob_then_allowlist_glob(self):
+        # Remove claude-*, then keep only gpt-*
+        result = filter_models(
+            SAMPLE_MODELS,
+            denylist=["claude-*"],
+            allowlist=["gpt-*"],
+        )
+        ids = {m["id"] for m in result}
+        assert ids == {"gpt-4o", "gpt-3.5-turbo"}
+
+    def test_exact_match_glob_still_works(self):
+        # fnmatch treats strings without wildcards as literals
+        result = filter_models(SAMPLE_MODELS, denylist=["gpt-4o"])
+        ids = {m["id"] for m in result}
+        assert ids == {"gpt-3.5-turbo", "claude-3-opus", "llama-3"}
