@@ -90,10 +90,12 @@ def map_model(
 
     # Only include "limit" when at least one value is non-null.
     if context is not None or output is not None:
-        result["limit"] = {
-            "context": context,
-            "output": output,
-        }
+        limit_obj: dict[str, int] = {}
+        if context is not None:
+            limit_obj["context"] = context
+        if output is not None:
+            limit_obj["output"] = output
+        result["limit"] = limit_obj
 
     return result
 

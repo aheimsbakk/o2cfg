@@ -95,14 +95,14 @@ class TestMapModel:
         assert result["name"] == "basic-model"
         assert "limit" in result
         assert result["limit"]["context"] == 50000
-        assert result["limit"]["output"] is None
+        assert "output" not in result["limit"]
 
     def test_limit_included_when_only_output_set(self):
         model = {"id": "basic-model"}
         result = map_model(model, output_limit=10000)
         assert result["name"] == "basic-model"
         assert "limit" in result
-        assert result["limit"]["context"] is None
+        assert "context" not in result["limit"]
         assert result["limit"]["output"] == 10000
 
     def test_missing_id_raises(self):
