@@ -61,10 +61,10 @@ Output Writer (serialize resolved config to stdout or file path)
 
 If `--provider-name` is not given, the config resolver applies this fallback chain:
 
-1. URL derivation — parse `base_url`, extract the hostname (strip scheme and port), take the first label before any `.`, lowercase it, replace `-` or `_` with spaces for readability:
-   - `http://localhost:8080/v1` → `"localhost"`
-   - `https://api.anthropic.com/v1/` → `"anthropic api"`
-   - `http://vllm.internal:8000/v1` → `"vllm internal"`
+1. URL derivation — parse `base_url`, extract the hostname (strip scheme and port), take the second-to-last label (the domain name before the TLD), lowercase it, replace `-` or `_` with spaces for readability:
+    - `http://localhost:8080/v1` → `"localhost"`
+    - `https://api.anthropic.com/v1/` → `"anthropic"`
+    - `http://vllm.internal:8000/v1` → `"vllm"`
 2. Hardcoded default — if the hostname is empty or unparseable: `"OpenAI-compatible"`.
 
 ---
