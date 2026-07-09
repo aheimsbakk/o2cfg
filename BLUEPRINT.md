@@ -167,7 +167,7 @@ Models are populated by discovery on every run (unless the API call fails). The 
 }
 ```
 
-The `limit` field is optional. It is omitted when both `context` and `output` are `null` and no CLI override (`--model-context-limit`, `--model-output-limit`) is set. If at least one value is non-null, the `limit` field is included with both values present.
+The `limit` field is optional. It is omitted when both `context` and `output` are `null` and no CLI override (`--model-context-limit`, `--model-output-limit`) is set. If at least one value is non-null, the `limit` field is included with only the non-null values present.
 
 ### With API key
 
@@ -196,7 +196,7 @@ The `limit` field is optional. It is omitted when both `context` and `output` ar
 }
 ```
 
-The `limit` field follows the same omission rule: omitted when both values are `null` and no CLI override is set.
+The `limit` field follows the same omission rule: omitted when both values are `null` and no CLI override is set. Only non-null values are included in the `limit` object.
 
 `allowlist` and `denylist` are NOT written into the output. They are applied as filters during discovery to narrow which discovered models appear in the `models` map.
 
