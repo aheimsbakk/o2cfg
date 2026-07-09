@@ -92,8 +92,8 @@ o2cfg [options]
 | `-n`  | `--provider-name [NAME]`| str  | N        | auto-resolved    | Display name for the provider entry in the output. When omitted, resolved by fallback chain: CLI flag > URL hostname derivation > hardcoded `"OpenAI-compatible"`. |
 | `-p`  | `--provider-provider [PKG]` | str | N       | `@ai-sdk/openai-compatible` | npm package name for the provider adapter. |
 | `-t`  | `--timeout [SECONDS]`              | int   | N        | `30`                   | HTTP request timeout in seconds (1-300).                                           |
-| `--model-context-limit [TOKENS]`   | int   | N        | null                   | Global override for context token limit when API returns no value.               |
-| `--model-output-limit [TOKENS]`    | int   | N        | null                   | Global override for output token limit when API returns no value.                |
+| `-C`  | `--model-context-limit [TOKENS]`   | int   | N        | null                   | Global override for context token limit when API returns no value.               |
+| `-O`  | `--model-output-limit [TOKENS]`    | int   | N        | null                   | Global override for output token limit when API returns no value.                |
 | `-a`  | `--allowlist [ID1,ID2,...]` | list  | N        | (all discovered)       | After discovery, keep only models whose IDs are in this comma-separated list.    |
 | `-d`  | `--denylist [ID1,ID2,...]`  | list  | N        | (none)                 | After discovery, remove models whose IDs are in this comma-separated list.       |
 

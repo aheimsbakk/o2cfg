@@ -108,15 +108,17 @@ First removes anything in the deny list, then keeps only models in the allow lis
 
 All flags are listed below. When a flag has environment variable support, that is the fallback if you omit it on the command line:
 
-| Flag                     | Short  | Required       | Description                                      |
-|--------------------------|--------|----------------|--------------------------------------------------|
-| `--url <URL>`            | `-u`   | Yes*           | API endpoint URL (e.g. `http://localhost:8080/v1`). Appends `/v1/models` automatically. |
-| `--api-key <KEY>`        | `-k`   | No             | Bearer token for authenticated endpoints. Discovery runs regardless — if no key is present, o2cfg calls `/v1/models` without an Authorization header. Written to `.options.apiKey` in the output when provided. |
-| `--output <PATH>`        | `-o`   | No             | File path to write the result. If omitted, the JSON is sent to stdout so you can view it or pipe it. |
-| `--provider-name <NAME>` | `-n`   | No             | Display name for the provider section. If omitted, o2cfg derives it from the URL hostname. |
-| `--timeout <SECONDS>`    | `-t`   | No             | Request timeout in seconds (1–300). Defaults to 30. |
-| `--allowlist <MODELS>`   | `-a`   | No             | Comma-separated list of model IDs to keep. Discovered models not in this list are excluded from the result. |
-| `--denylist <MODELS>`    | `-d`   | No             | Comma-separated list of model IDs to exclude, even if they were discovered. |
+| Flag                             | Short  | Required       | Description                                      |
+|----------------------------------|--------|----------------|--------------------------------------------------|
+| `--url <URL>`                    | `-u`   | Yes*           | API endpoint URL (e.g. `http://localhost:8080/v1`). Appends `/v1/models` automatically. |
+| `--api-key <KEY>`                | `-k`   | No             | Bearer token for authenticated endpoints. Discovery runs regardless — if no key is present, o2cfg calls `/v1/models` without an Authorization header. Written to `.options.apiKey` in the output when provided. |
+| `--output <PATH>`                | `-o`   | No             | File path to write the result. If omitted, the JSON is sent to stdout so you can view it or pipe it. |
+| `--provider-name <NAME>`         | `-n`   | No             | Display name for the provider section. If omitted, o2cfg derives it from the URL hostname. |
+| `--timeout <SECONDS>`            | `-t`   | No             | Request timeout in seconds (1–300). Defaults to 30. |
+| `--model-context-limit <TOKENS>` | `-C`   | No             | Global override for context token limit when the API returns no value. |
+| `--model-output-limit <TOKENS>`  | `-O`   | No             | Global override for output token limit when the API returns no value. |
+| `--allowlist <MODELS>`           | `-a`   | No             | Comma-separated list of model IDs to keep. Discovered models not in this list are excluded from the result. |
+| `--denylist <MODELS>`            | `-d`   | No             | Comma-separated list of model IDs to exclude, even if they were discovered. |
 
 \* `--url` can be replaced by the `OPENAI_BASE_URL` environment variable.
 

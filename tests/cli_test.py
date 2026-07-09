@@ -55,9 +55,19 @@ class TestBuildParser:
         args = parser.parse_args(["--model-context-limit", "100000"])
         assert args.model_context_limit == 100000
 
+    def test_parser_has_short_model_context_limit_flag(self):
+        parser = build_parser()
+        args = parser.parse_args(["-C", "100000"])
+        assert args.model_context_limit == 100000
+
     def test_parser_has_model_output_limit_flag(self):
         parser = build_parser()
         args = parser.parse_args(["--model-output-limit", "32000"])
+        assert args.model_output_limit == 32000
+
+    def test_parser_has_short_model_output_limit_flag(self):
+        parser = build_parser()
+        args = parser.parse_args(["-O", "32000"])
         assert args.model_output_limit == 32000
 
     def test_parser_has_allowlist_flag(self):
@@ -84,6 +94,10 @@ class TestBuildParser:
                 "Test",
                 "-t",
                 "10",
+                "-C",
+                "100000",
+                "-O",
+                "32000",
                 "-a",
                 "model-a",
                 "-d",
@@ -95,6 +109,8 @@ class TestBuildParser:
         assert args.output == "/tmp/out.json"
         assert args.provider_name == "Test"
         assert args.timeout == 10
+        assert args.model_context_limit == 100000
+        assert args.model_output_limit == 32000
         assert args.allowlist == "model-a"
         assert args.denylist == "model-b"
 

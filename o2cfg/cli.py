@@ -97,6 +97,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     parser.add_argument(
+        "-C",
         "--model-context-limit",
         type=int,
         default=None,
@@ -104,6 +105,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     parser.add_argument(
+        "-O",
         "--model-output-limit",
         type=int,
         default=None,
