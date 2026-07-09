@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.3.0] - 2026-07-09
+
+- **why:** Add glob pattern filtering, short CLI flags, comprehensive logging, and fix config edge cases
+- **model:** qwen-3.6-think-coding
+- **tags:** glob-filtering, cli-flags, logging, config-fixes
+
+### Added
+
+- Glob pattern matching for allowlist and denylist filters (`o2cfg/filter.py`)
+- Short flags `-C` and `-O` for context and output model limit overrides (`o2cfg/cli.py`)
+- Logging throughout the CLI and config modules (`o2cfg/cli.py`, `o2cfg/config.py`, `o2cfg/__main__.py`)
+
+### Fixed
+
+- `base_url` trailing `/v1/models` handled without double-path duplication (`o2cfg/config.py`)
+- `limit` field only included in output when explicitly set (`o2cfg/mapper.py`)
+- Typo in model name reference
+
+### Changed
+
+- Large files split into smaller focused modules (`o2cfg/`)
+
 ## [0.2.1] - 2026-07-08
 
 - **why:** Verbosity default did not match the blueprint spec; no flags and -vv both produced debug output
