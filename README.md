@@ -2,8 +2,6 @@
 
 Auto-discover models from OpenAI-compatible API endpoints and generate opencode provider configurations.
 
-Source: https://github.com/aheimsbakk/o2cfg
-
 ## What it does
 
 - Connects to an `/v1/models` endpoint and lists all available models
@@ -188,6 +186,11 @@ pytest  # run all tests
 
 The project uses only Python standard library modules plus `pytest` for testing. No external runtime dependencies are required.
 
-## Contributing
-
-Report issues or submit pull requests at: https://github.com/aheimsbakk/o2cfg
+> [!NOTE]
+>
+> Architecture (BLUEPRINT.md): Qwen 3.6 35B A3B
+> - temp = 1.0, top-p = 0.95, top-k = 20, min-p = 0.0, presence-penalty = 1.5,
+repeat-penalty = 1.0
+>
+> Code: Qwen 3.6 35B A3B
+> - temp = 0.6, top-p = 0.95, top-k = 20, min-p = 0.0, presence-penalty = 0.0, repeat-penalty = 1.0
