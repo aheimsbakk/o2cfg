@@ -122,7 +122,7 @@ All runtime dependencies are stdlib only. No external packages are needed for th
 | `cli_test.py`  | Argument parsing, help/version output, required flags   | Subprocess invocation or direct argument parsing; verify exit codes via argparse. |
 | `config_test.py`              | Settings merging, provider name fallback chain          | Call resolver with different flag/env combos; assert resolved values. |
 | `client_test.py`               | HTTP requests to `/v1/models`, error handling           | Patch `urllib.request.urlopen`; verify request URL, headers, timeout value, and exception raising on non-200. |
-| `filter_test.py`             | Denylist removals, allowlist subsetting, edge cases   | Feed raw model lists into filter function; assert output length and membership. |
+| `filter_test.py`             | Denylist removals, allowlist subsetting, glob patterns, edge cases   | Feed raw model lists into filter function; assert output length and membership. Uses ``fnmatch`` glob syntax (``*``, ``?``, ``[seq]``). |
 | `mapper_test.py`             | Model object transformation, limit extraction/fallback | Map sample API responses; verify output keys, null handling, CLI override paths. |
 
 ### Test Execution Patterns
