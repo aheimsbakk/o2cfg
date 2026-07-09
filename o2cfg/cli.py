@@ -4,8 +4,7 @@ import argparse
 import os
 import sys
 
-
-VERSION = "0.2.1"
+from . import __version__
 
 DEFAULT_PROVIDER = "@ai-sdk/openai-compatible"
 DEFAULT_TIMEOUT = 30
@@ -36,7 +35,7 @@ def build_parser() -> argparse.ArgumentParser:
         "-V",
         "--version",
         action="version",
-        version=VERSION,
+        version=__version__,
     )
 
     verbosity_group = parser.add_mutually_exclusive_group()

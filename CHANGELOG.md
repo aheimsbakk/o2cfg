@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.3.1] - 2026-07-09
+
+- **why:** Version drift between pyproject.toml and __init__.py; --version flag used a hardcoded constant instead of __version__
+- **model:** qwen-3.6-think-coding
+- **tags:** version, bump-script, cli
+
+### Fixed
+
+- `--version` flag now reads from `__version__` in `o2cfg/__init__.py` instead of a hardcoded constant (`o2cfg/cli.py`)
+- `scripts/bump-version.sh` now updates both `pyproject.toml` and `o2cfg/__init__.py` in lockstep
+- `o2cfg/__init__.py` version aligned with `pyproject.toml`
+
+### Changed
+
+- `scripts/bump-version.sh` checks for both `pyproject.toml` and `o2cfg/__init__.py` before running
+
 ## [0.3.0] - 2026-07-09
 
 - **why:** Add glob pattern filtering, short CLI flags, comprehensive logging, and fix config edge cases

@@ -1,21 +1,27 @@
 #!/usr/bin/env bash
-# bump-version.sh — Bump the version in pyproject.toml.
+# bump-version.sh — Bump the version in pyproject.toml and __init__.py.
 #
 # Usage:
 #   ./scripts/bump-version.sh [patch|minor|major]
 #
 # Exit codes:
 #   0  Version bumped successfully.
-#   1  Invalid arguments or pyproject.toml not found.
+#   1  Invalid arguments or required file not found.
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 PYPROJECT="$ROOT_DIR/pyproject.toml"
+INITPY="$ROOT_DIR/o2cfg/__init__.py"
 
 if [[ ! -f "$PYPROJECT" ]]; then
 	echo "ERROR: $PYPROJECT not found." >&2
+	exit 1
+fi
+
+if [[ ! -f "$INITPY" ]]; then
+	echo "ERROR: $INITPY not found." >&2
 	exit 1
 fi
 
@@ -54,5 +60,8 @@ NEW_VERSION="$MAJOR.$MINOR.$PATCH"
 
 # Update pyproject.toml
 sed -i "s/^version = \"$CURRENT\"/version = \"$NEW_VERSION\"/" "$PYPROJECT"
+
+# Update __init__.py
+sed -i "s/^__version__ = \"$CURRENT\"/__version__ = \"$NEW_VERSION\"/" "$INITPY"
 
 echo "$CURRENT -> $NEW_VERSION"
