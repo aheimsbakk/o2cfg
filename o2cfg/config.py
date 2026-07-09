@@ -137,9 +137,12 @@ def resolve_settings(
     allow_list = _parse_comma_list(allowlist)
     deny_list = _parse_comma_list(denylist)
 
-    # Normalize base_url: ensure it ends with /v1 (the prefix for the models endpoint)
-    # If the URL already ends with /v1, use as-is. Otherwise append /v1/models
-    # The client will append /models, so we ensure /v1 is present.
+    # Normalize base_url: ensure it ends with /v1 (the prefix for the models endpoint).
+    # The client appends /models, so the full URL is base_url + "/models".
+    # If the URL already ends with /v1/models, strip /models first.
+    if base_url.endswith("/v1/models"):
+        base_url = base_url[: -len("/models")]
+    # Ensure base URL ends with /v1.
     if not base_url.endswith("/v1"):
         if base_url.endswith("/"):
             base_url = base_url + "v1"

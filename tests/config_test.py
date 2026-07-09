@@ -131,6 +131,14 @@ class TestResolveSettings:
         settings = resolve_settings(base_url="http://localhost:8080/v1")
         assert settings.base_url == "http://localhost:8080/v1"
 
+    def test_base_url_has_v1_models_strips_models(self):
+        settings = resolve_settings(base_url="http://localhost:8080/v1/models")
+        assert settings.base_url == "http://localhost:8080/v1"
+
+    def test_base_url_with_path_and_v1_models_strips_models(self):
+        settings = resolve_settings(base_url="http://localhost:8080/api/v1/models")
+        assert settings.base_url == "http://localhost:8080/api/v1"
+
     def test_base_url_with_path_appends_v1(self):
         settings = resolve_settings(base_url="http://localhost:8080/api")
         assert settings.base_url == "http://localhost:8080/api/v1"
