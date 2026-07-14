@@ -1,13 +1,7 @@
 """Integration tests for o2cfg.__main__ (run function and output writer)."""
 
-import json
-import os
-from unittest.mock import patch
 
-import pytest
 
-from o2cfg.__main__ import run
-from o2cfg.client import DiscoveryError
 from o2cfg.config import Settings
 from o2cfg.output import build_config_document
 

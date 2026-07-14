@@ -3,7 +3,6 @@
 import json
 import os
 
-import pytest
 
 from o2cfg.__main__ import run
 
@@ -13,7 +12,6 @@ class TestRunBasic:
 
     def test_run_with_mocked_discovery(self, monkeypatch, temp_output_dir):
         """Test a full run with mocked client."""
-        from o2cfg.client import fetch_models
 
         def mock_fetch(*args, **kwargs):
             return [

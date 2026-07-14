@@ -3,7 +3,6 @@
 import json
 import os
 
-import pytest
 
 from o2cfg.__main__ import run
 

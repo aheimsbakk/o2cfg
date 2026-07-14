@@ -4,7 +4,6 @@ import json
 import os
 from unittest.mock import patch
 
-import pytest
 
 from o2cfg.__main__ import run
 from o2cfg.client import DiscoveryError
@@ -35,7 +34,6 @@ class TestRunErrors:
 
     def test_run_unhandled_exception_exits_1(self, caplog):
         """Unhandled exceptions produce exit 1 with error message."""
-        from unittest.mock import patch
 
         with patch("o2cfg.__main__.parse_args", side_effect=RuntimeError("boom")):
             code = run([])
@@ -48,7 +46,6 @@ class TestRunDiscoveryErrors:
 
     def test_run_with_discovery_failure_exits_1(self, monkeypatch, temp_output_dir):
         """Network-level discovery failures exit 1 without writing output."""
-        from o2cfg.client import DiscoveryError
 
         def mock_fetch(*args, **kwargs):
             raise DiscoveryError(
@@ -65,7 +62,6 @@ class TestRunDiscoveryErrors:
 
     def test_run_discovery_error_non_auth_exits_1(self, monkeypatch, temp_output_dir):
         """Non-auth discovery errors (timeout, unreachable, non-200) exit 1."""
-        from o2cfg.client import DiscoveryError
 
         def mock_fetch(*args, **kwargs):
             raise DiscoveryError(
@@ -84,7 +80,6 @@ class TestRunDiscoveryErrors:
 
     def test_run_discovery_error_auth_exits_0(self, monkeypatch, temp_output_dir):
         """Auth failures (401/403) produce empty models map with exit 0."""
-        from o2cfg.client import DiscoveryError
 
         def mock_fetch(*args, **kwargs):
             raise DiscoveryError(

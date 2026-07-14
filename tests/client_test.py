@@ -1,8 +1,6 @@
 """Tests for o2cfg OpenAI Client."""
 
-import json
 import pytest
-import urllib.error
 from o2cfg.client import fetch_models, DiscoveryError, redact_api_key
 
 

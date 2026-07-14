@@ -1,6 +1,5 @@
 """Tests for o2cfg Model Filter."""
 
-import pytest
 from o2cfg.filter import filter_models
 
 

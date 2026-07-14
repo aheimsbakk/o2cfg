@@ -1,6 +1,5 @@
 """Tests for o2cfg Config Resolver."""
 
-import os
 import pytest
 from o2cfg.config import (
     resolve_settings,
