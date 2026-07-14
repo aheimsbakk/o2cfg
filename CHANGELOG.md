@@ -3,7 +3,7 @@
 ## [0.3.2] - 2026-07-14
 
 - **why:** Fix URL normalization with trailing slashes, dead code removal, and CLI flags that accept optional values
-- **model:** qwen-3.6-think-coding
+- **model:** kompis/qwen-3.6-think-coding-mtp
 - **tags:** bug-fix, cli, url-normalization, dead-code
 
 ### Fixed
