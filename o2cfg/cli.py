@@ -38,8 +38,7 @@ def build_parser() -> argparse.ArgumentParser:
         version=__version__,
     )
 
-    verbosity_group = parser.add_mutually_exclusive_group()
-    verbosity_group.add_argument(
+    parser.add_argument(
         "-v",
         "--verbosity",
         action="count",
@@ -51,6 +50,8 @@ def build_parser() -> argparse.ArgumentParser:
         "-u",
         "--url",
         type=str,
+        nargs="?",
+        const=None,
         default=os.environ.get("OPENAI_BASE_URL"),
         help="Base URL of the OpenAI-compatible endpoint (e.g. http://localhost:8080/v1). Falls back to OPENAI_BASE_URL env var.",
     )
@@ -59,6 +60,8 @@ def build_parser() -> argparse.ArgumentParser:
         "-k",
         "--api-key",
         type=str,
+        nargs="?",
+        const=None,
         default=os.environ.get("OPENAI_API_KEY"),
         help="Bearer token for authenticated endpoints. Falls back to OPENAI_API_KEY env var.",
     )
@@ -67,6 +70,8 @@ def build_parser() -> argparse.ArgumentParser:
         "-o",
         "--output",
         type=str,
+        nargs="?",
+        const=None,
         default=None,
         help="File path to write the generated config. Defaults to stdout.",
     )
@@ -75,6 +80,8 @@ def build_parser() -> argparse.ArgumentParser:
         "-n",
         "--provider-name",
         type=str,
+        nargs="?",
+        const=None,
         default=None,
         help="Display name for the provider entry. Defaults to auto-resolution from URL hostname.",
     )
@@ -115,6 +122,8 @@ def build_parser() -> argparse.ArgumentParser:
         "-a",
         "--allowlist",
         type=str,
+        nargs="?",
+        const=None,
         default=None,
         help="Comma-separated list of model IDs to keep. Discovered models not in this list are excluded.",
     )
@@ -123,6 +132,8 @@ def build_parser() -> argparse.ArgumentParser:
         "-d",
         "--denylist",
         type=str,
+        nargs="?",
+        const=None,
         default=None,
         help="Comma-separated list of model IDs to exclude, even if they were discovered.",
     )

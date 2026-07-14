@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.3.2] - 2026-07-14
+
+- **why:** Fix URL normalization with trailing slashes, dead code removal, and CLI flags that accept optional values
+- **model:** qwen-3.6-think-coding
+- **tags:** bug-fix, cli, url-normalization, dead-code
+
+### Fixed
+
+- Trailing slashes on `--url` no longer produce a double `/v1` in the request URL (`o2cfg/config.py`)
+- `--url`, `--api-key`, `--output`, `--provider-name`, `--allowlist`, and `--denylist` accept no value and fall back to environment variables (`o2cfg/cli.py`, `o2cfg/config.py`)
+
+### Changed
+
+- Removed dead `mutually_exclusive_group` in the CLI parser (`o2cfg/cli.py`)
+- Removed unused default `verbosity=1` in `Settings.__init__`; now defaults to `0` (`o2cfg/config.py`)
+
+### Fixed
+
+- Removed incorrect verbosity claim from 0.1.0 changelog entry (`CHANGELOG.md`)
+
 ## [0.3.1] - 2026-07-09
 
 - **why:** Version drift between pyproject.toml and __init__.py; --version flag used a hardcoded constant instead of __version__
@@ -71,7 +91,6 @@
 
 ### Fixed
 
-- Verbosity default now starts at `warning` (level 1) instead of `error` (`o2cfg/cli.py`, `o2cfg/__main__.py`)
 - Non-auth API failures (timeout, unreachable, non-200, invalid JSON) now exit with code 1 instead of 0 (`o2cfg/__main__.py`)
 - Output JSON now uses compact format with trailing newline (`o2cfg/__main__.py`)
 

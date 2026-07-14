@@ -77,7 +77,7 @@ class TestResolveSettings:
         assert settings.model_output_limit is None
         assert settings.allowlist is None
         assert settings.denylist is None
-        assert settings.verbosity == 1
+        assert settings.verbosity == 0
 
     def test_all_options(self):
         settings = resolve_settings(
@@ -198,4 +198,4 @@ class TestSettingsClass:
         assert settings.model_output_limit is None
         assert settings.allowlist is None
         assert settings.denylist is None
-        assert settings.verbosity == 1
+        assert settings.verbosity == 0

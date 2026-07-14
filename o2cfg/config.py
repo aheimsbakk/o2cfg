@@ -1,6 +1,7 @@
 """Config Resolver — merges CLI args + environment variables into resolved settings."""
 
 import logging
+import os
 import urllib.parse
 from typing import Optional
 
@@ -39,7 +40,7 @@ class Settings:
         model_output_limit: Optional[int] = None,
         allowlist: Optional[list[str]] = None,
         denylist: Optional[list[str]] = None,
-        verbosity: int = 1,
+        verbosity: int = 0,
     ):
         self.base_url = base_url
         self.api_key = api_key
@@ -78,7 +79,7 @@ def resolve_settings(
     model_output_limit: Optional[int] = None,
     allowlist: Optional[str] = None,
     denylist: Optional[str] = None,
-    verbosity: int = 1,
+    verbosity: int = 0,
 ) -> Settings:
     """Merge CLI arguments and environment variables into a ``Settings`` object.
 
@@ -117,6 +118,12 @@ def resolve_settings(
     ValueError
         When *base_url* is ``None`` or empty.
     """
+    # Fall back to environment variables when CLI flags are absent or empty.
+    if not base_url:
+        base_url = os.environ.get("OPENAI_BASE_URL")
+    if not api_key:
+        api_key = os.environ.get("OPENAI_API_KEY")
+
     if not base_url:
         raise ValueError(
             "Missing base URL. Provide --url <URL> or set OPENAI_BASE_URL environment variable."
@@ -140,15 +147,16 @@ def resolve_settings(
 
     # Normalize base_url: ensure it ends with /v1 (the prefix for the models endpoint).
     # The client appends /models, so the full URL is base_url + "/models".
+    # Strip trailing slashes first so /v1/ and /v1/models/ are handled correctly.
+    base_url = base_url.rstrip("/")
+
     # If the URL already ends with /v1/models, strip /models first.
     if base_url.endswith("/v1/models"):
         base_url = base_url[: -len("/models")]
+
     # Ensure base URL ends with /v1.
     if not base_url.endswith("/v1"):
-        if base_url.endswith("/"):
-            base_url = base_url + "v1"
-        else:
-            base_url = base_url + "/v1"
+        base_url = base_url + "/v1"
 
     return Settings(
         base_url=base_url,
