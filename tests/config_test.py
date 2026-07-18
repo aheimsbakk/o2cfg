@@ -168,6 +168,24 @@ class TestResolveSettings:
         )
         assert settings.denylist == []
 
+    def test_vision_parsed(self):
+        settings = resolve_settings(
+            base_url="http://localhost:8080/v1",
+            vision="gpt-4o,gpt-4-vision",
+        )
+        assert settings.vision == ["gpt-4o", "gpt-4-vision"]
+
+    def test_vision_default_is_none(self):
+        settings = resolve_settings(base_url="http://localhost:8080/v1")
+        assert settings.vision is None
+
+    def test_vision_empty_string(self):
+        settings = resolve_settings(
+            base_url="http://localhost:8080/v1",
+            vision="",
+        )
+        assert settings.vision == []
+
 
 class TestSettingsClass:
     """Test the Settings data container."""
@@ -184,6 +202,7 @@ class TestSettingsClass:
         assert hasattr(settings, "model_output_limit")
         assert hasattr(settings, "allowlist")
         assert hasattr(settings, "denylist")
+        assert hasattr(settings, "vision")
         assert hasattr(settings, "verbosity")
 
     def test_default_values(self):
@@ -197,4 +216,5 @@ class TestSettingsClass:
         assert settings.model_output_limit is None
         assert settings.allowlist is None
         assert settings.denylist is None
+        assert settings.vision is None
         assert settings.verbosity == 0

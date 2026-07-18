@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.4.0] - 2026-07-18
+
+- **why:** Add vision model support so opencode can recognize image-capable models from OpenAI-compatible APIs
+- **model:** kompis/qwen-3.6-think-coding-mtp
+- **tags:** vision, cli, model-stanza
+
+### Added
+
+- `--vision` / `-i` CLI flag accepts comma-separated glob patterns for vision-enabled models (`o2cfg/cli.py`, `o2cfg/config.py`)
+- Vision stanza (`attachment: true`, `modalities: { input: ["text", "image"], output: ["text"] }`) applied to matching models during mapping (`o2cfg/mapper.py`)
+- Vision tests across CLI parsing, config resolution, model mapping, and integration (`tests/cli_test.py`, `tests/config_test.py`, `tests/mapper_test.py`)
+
+### Changed
+
+- `BLUEPRINT.md` — added `--vision` argument spec, data flow notes, and output schema examples with vision stanza
+- `README.md` — added "Marking models as vision-enabled" section and updated flags table
+
 ## [0.3.3] - 2026-07-14
 
 - **why:** Remove unused imports to clean up code and reduce startup overhead

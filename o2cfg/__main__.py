@@ -85,6 +85,7 @@ def _run(argv: list[str] | None = None) -> int:
             model_output_limit=args.model_output_limit,
             allowlist=args.allowlist,
             denylist=args.denylist,
+            vision=args.vision,
             verbosity=verbosity,
         )
     except ValueError as exc:
@@ -138,6 +139,7 @@ def _run(argv: list[str] | None = None) -> int:
         filtered,
         context_limit=settings.model_context_limit,
         output_limit=settings.model_output_limit,
+        vision_patterns=settings.vision,
     )
 
     if discovery_error and not models_map:
