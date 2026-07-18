@@ -1,5 +1,6 @@
 """Model Mapper — transform API model objects into opencode schema format."""
 
+import fnmatch
 from typing import Any
 
 
@@ -47,6 +48,7 @@ def map_model(
     model: dict[str, Any],
     context_limit: int | None = None,
     output_limit: int | None = None,
+    vision_patterns: list[str] | None = None,
 ) -> dict[str, Any]:
     """Transform a single API model object into opencode schema format.
 
@@ -59,6 +61,9 @@ def map_model(
         it takes precedence; otherwise *context_limit* is used.
     output_limit : int | None
         Global override for output token limit.
+    vision_patterns : list[str] | None
+        Glob patterns for vision-enabled models.  If the model ID matches any
+        pattern, the vision stanza (``attachment`` + ``modalities``) is added.
 
     Returns
     -------
@@ -66,6 +71,8 @@ def map_model(
         A dict matching the opencode model schema. Always includes ``name``.
         Includes ``limit`` only when at least one of ``context`` or ``output``
         is non-null; otherwise the ``limit`` key is omitted entirely.
+        Includes ``attachment`` and ``modalities`` when the model ID matches a
+        vision pattern; otherwise those keys are omitted.
 
     Raises
     ------
@@ -97,6 +104,17 @@ def map_model(
             limit_obj["output"] = output
         result["limit"] = limit_obj
 
+    # Apply vision stanza if the model ID matches any vision pattern.
+    if vision_patterns:
+        for pattern in vision_patterns:
+            if fnmatch.fnmatch(model_id, pattern):
+                result["attachment"] = True
+                result["modalities"] = {
+                    "input": ["text", "image"],
+                    "output": ["text"],
+                }
+                break
+
     return result
 
 
@@ -104,6 +122,7 @@ def map_models(
     models: list[dict[str, Any]],
     context_limit: int | None = None,
     output_limit: int | None = None,
+    vision_patterns: list[str] | None = None,
 ) -> dict[str, dict[str, Any]]:
     """Transform a list of API model objects into an opencode models map.
 
@@ -115,6 +134,8 @@ def map_models(
         Global override for context token limit.
     output_limit : int | None
         Global override for output token limit.
+    vision_patterns : list[str] | None
+        Glob patterns for vision-enabled models.
 
     Returns
     -------
@@ -124,7 +145,7 @@ def map_models(
     result = {}
     for model in models:
         try:
-            mapped = map_model(model, context_limit, output_limit)
+            mapped = map_model(model, context_limit, output_limit, vision_patterns)
             result[mapped["name"]] = mapped
         except ValueError:
             # Skip models without an id

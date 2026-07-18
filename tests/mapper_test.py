@@ -115,6 +115,59 @@ class TestMapModel:
         with pytest.raises(ValueError, match="missing required 'id' field"):
             map_model(model)
 
+    def test_vision_stanza_applied_on_match(self):
+        model = {"id": "gpt-4o"}
+        result = map_model(model, vision_patterns=["gpt-4o"])
+        assert result["name"] == "gpt-4o"
+        assert result["attachment"] is True
+        assert result["modalities"] == {
+            "input": ["text", "image"],
+            "output": ["text"],
+        }
+
+    def test_vision_stanza_not_applied_on_no_match(self):
+        model = {"id": "gpt-3.5-turbo"}
+        result = map_model(model, vision_patterns=["gpt-4o"])
+        assert result["name"] == "gpt-3.5-turbo"
+        assert "attachment" not in result
+        assert "modalities" not in result
+
+    def test_vision_stanza_with_glob_pattern(self):
+        model = {"id": "gpt-4o-mini"}
+        result = map_model(model, vision_patterns=["gpt-4o-*"])
+        assert result["attachment"] is True
+        assert result["modalities"] == {
+            "input": ["text", "image"],
+            "output": ["text"],
+        }
+
+    def test_vision_stanza_with_multiple_patterns(self):
+        model = {"id": "claude-3-opus"}
+        result = map_model(model, vision_patterns=["gpt-4o", "claude-3-opus"])
+        assert result["attachment"] is True
+
+    def test_vision_stanza_none_patterns_no_effect(self):
+        model = {"id": "gpt-4o"}
+        result = map_model(model, vision_patterns=None)
+        assert "attachment" not in result
+        assert "modalities" not in result
+
+    def test_vision_stanza_with_limits(self):
+        model = {
+            "id": "gpt-4o",
+            "max_input_tokens": 128000,
+            "max_output_tokens": 4096,
+        }
+        result = map_model(model, vision_patterns=["gpt-4o"])
+        assert result["name"] == "gpt-4o"
+        assert result["limit"]["context"] == 128000
+        assert result["limit"]["output"] == 4096
+        assert result["attachment"] is True
+        assert result["modalities"] == {
+            "input": ["text", "image"],
+            "output": ["text"],
+        }
+
 
 class TestMapModels:
     """Test bulk model mapping."""
@@ -158,3 +211,19 @@ class TestMapModels:
         models = [{"id": "custom-model-id"}]
         result = map_models(models)
         assert result["custom-model-id"]["name"] == "custom-model-id"
+
+    def test_vision_applied_only_to_matching_models(self):
+        models = [
+            {"id": "gpt-4o"},
+            {"id": "gpt-3.5-turbo"},
+            {"id": "gpt-4o-mini"},
+        ]
+        result = map_models(models, vision_patterns=["gpt-4o*"])
+        assert result["gpt-4o"]["attachment"] is True
+        assert "attachment" not in result["gpt-3.5-turbo"]
+        assert result["gpt-4o-mini"]["attachment"] is True
+
+    def test_vision_empty_list_no_effect(self):
+        models = [{"id": "gpt-4o"}]
+        result = map_models(models, vision_patterns=[])
+        assert "attachment" not in result["gpt-4o"]

@@ -100,6 +100,37 @@ o2cfg --url http://localhost:8080/v1 -a gpt-4o,o1,gpt-3.5-turbo -d gpt-3.5-turbo
 
 First removes anything in the deny list, then keeps only models in the allow list.
 
+## Marking models as vision-enabled
+
+Use the `--vision` flag to mark models as vision-capable. Models whose IDs match any glob pattern in the list receive an `attachment` and `modalities` block in the output:
+
+```bash
+o2cfg --url http://localhost:8080/v1 -i "gpt-4o*"
+```
+
+This matches `gpt-4o`, `gpt-4o-mini`, and any other model ID starting with `gpt-4o`. The output for those models includes:
+
+```json
+{
+  "gpt-4o": {
+    "name": "gpt-4o",
+    "attachment": true,
+    "modalities": {
+      "input": ["text", "image"],
+      "output": ["text"]
+    }
+  }
+}
+```
+
+Multiple comma-separated glob patterns work the same way as `--allowlist` and `--denylist`:
+
+```bash
+o2cfg --url http://localhost:8080/v1 -i "gpt-4o*,claude-3-opus"
+```
+
+Models that do not match any vision pattern are left unchanged.
+
 ## Configuration options
 
 All flags are listed below. When a flag has environment variable support, that is the fallback if you omit it on the command line:
@@ -116,6 +147,7 @@ All flags are listed below. When a flag has environment variable support, that i
 | `--model-output-limit <TOKENS>`  | `-O`   | No             | Global override for output token limit when the API returns no value. |
 | `--allowlist <MODELS>`           | `-a`   | No             | Comma-separated list of model IDs to keep. Discovered models not in this list are excluded from the result. |
 | `--denylist <MODELS>`            | `-d`   | No             | Comma-separated list of model IDs to exclude, even if they were discovered. |
+| `--vision <MODELS>`              | `-i`   | No             | Comma-separated glob patterns for vision-enabled models. Matching models receive `attachment: true` and a `modalities` block. |
 | `-v, -vv, -vvv`                  |        | No             | Verbosity: no flag (error), `-v` (warning), `-vv` (info), `-vvv` (debug). Default: error. |
 | `-V`                             |        | No             | Print version and exit. |
 
@@ -134,7 +166,7 @@ You can set these instead of using command-line flags:
 
 ## Output format
 
-Example output with an API key:
+Example output with an API key and a vision-enabled model:
 
 ```json
 {
@@ -153,6 +185,18 @@ Example output with an API key:
           "limit": {
             "context": 128000,
             "output": 4096
+          },
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          }
+        },
+        "gpt-3.5-turbo": {
+          "name": "gpt-3.5-turbo",
+          "limit": {
+            "context": 16385,
+            "output": 4096
           }
         }
       }
@@ -160,6 +204,8 @@ Example output with an API key:
   }
 }
 ```
+
+The `gpt-4o` model has vision enabled because its ID matches a `--vision` glob pattern. The `gpt-3.5-turbo` model does not.
 
 ## What happens when the API call fails
 

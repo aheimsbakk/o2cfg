@@ -46,13 +46,14 @@ Output Writer (serialize resolved config to stdout or file path)
     - Required: `base_url`
     - Optional (auto-resolved if unset): `provider_name`, `provider_npm`, `model_default_limits`
      - When `--output` is omitted, `output_file_path` is null — the formatted JSON is written to stdout and no file is created on disk. No environment variable controls this behavior; only the CLI flag.
+     - Optional: `vision` — comma-separated glob patterns for vision-enabled models.
 
 4. **OpenAI Client** sends `GET /v1/models?timeout=<t>`:
    - If `api_key` is provided, sets `Authorization: Bearer <key>` header.
    - If `api_key` is not provided, sends the request with no Authorization header. Many OpenAI-compatible endpoints (self-hosted on private networks) accept unauthenticated calls to the models list endpoint. The discovery attempt is best-effort; network or auth failures produce a warning and do not abort the run.
 5. **Response is parsed:** a JSON object containing `"data": [{ "id", "object", ... }]`.
 6. **Model Filter** applies denylist first, then allowlist, to the parsed model set. Each entry is treated as a glob pattern matched against model IDs using Unix shell-style wildcards (``*``, ``?``, ``[seq]``, ``[!seq]``). Strings without wildcards are exact matches. When neither flag is given all discovered models pass through unchanged. An empty allowlist results in zero models included (the output file has `"models": {}`).
-7. **Model Mapper** iterates each model and builds the opencode-per-model structure, extracting available context/output limit metadata if present (otherwise storing `null` for discovery via environment).
+7. **Model Mapper** iterates each model and builds the opencode-per-model structure, extracting available context/output limit metadata if present (otherwise storing `null` for discovery via environment). If the model ID matches any pattern in the vision glob list, the vision stanza (`attachment` + `modalities`) is appended to the model object.
 8. **Output Writer** serializes the config document:
     - When `output_file_path` is null, write JSON to stdout directly (fd 1). No warnings are ever written to stdout — they go to stderr only so the two streams never mix.
     - When `output_file_path` is set, serialize the config at that path. Write atomically: temporary file in the same directory, then rename. Existing files are overwritten without confirmation.
@@ -96,6 +97,7 @@ o2cfg [options]
 | `-O`  | `--model-output-limit [TOKENS]`    | int   | N        | null                   | Global override for output token limit when API returns no value.                |
 | `-a`  | `--allowlist [ID1,ID2,...]` | list  | N        | (all discovered)       | After discovery, keep only models whose IDs match any comma-separated glob pattern (``*``, ``?``, ``[seq]``, ``[!seq]``).  For example, ``gpt-*`` matches ``gpt-4o`` and ``gpt-3.5-turbo``.    |
 | `-d`  | `--denylist [ID1,ID2,...]`  | list  | N        | (none)                 | After discovery, remove models whose IDs match any comma-separated glob pattern.  Strings without wildcards are treated as exact matches.    |
+| `-i`  | `--vision [ID1,ID2,...]`    | list  | N        | (none)                 | Comma-separated list of glob patterns (``*``, ``?``, ``[seq]``, ``[!seq]``). Models whose IDs match any pattern receive a vision stanza: ``"attachment": true`` and ``"modalities": { "input": ["text", "image"], "output": ["text"] }``.    |
 
 \* Required unless the corresponding environment variable (`OPENAI_BASE_URL`) is set.
 
@@ -160,6 +162,11 @@ Models are populated by discovery on every run (unless the API call fails). The 
           "limit": {
             "context": <integer-or-null>,
             "output": <integer-or-null>
+          },
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
           }
         }
       }
@@ -189,6 +196,11 @@ The `limit` field is optional. It is omitted when both `context` and `output` ar
           "limit": {
             "context": <integer-or-null>,
             "output": <integer-or-null>
+          },
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
           }
         }
       }
@@ -199,7 +211,12 @@ The `limit` field is optional. It is omitted when both `context` and `output` ar
 
 The `limit` field follows the same omission rule: omitted when both values are `null` and no CLI override is set. Only non-null values are included in the `limit` object.
 
-`allowlist` and `denylist` are NOT written into the output. They are applied as filters during discovery to narrow which discovered models appear in the `models` map.
+The vision stanza is included only on models whose IDs match at least one glob pattern from the `--vision` flag. It is omitted entirely from models that do not match. The stanza consists of two fields:
+
+- `"attachment": true` — indicates the model accepts image attachments.
+- `"modalities": { "input": ["text", "image"], "output": ["text"] }` — declares the supported input and output modalities.
+
+`allowlist`, `denylist`, and `vision` are NOT written into the output. They are applied during discovery and mapping to narrow and annotate which discovered models appear in the `models` map.
 
 ---
 

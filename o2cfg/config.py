@@ -25,6 +25,7 @@ class Settings:
         "model_output_limit",
         "allowlist",
         "denylist",
+        "vision",
         "verbosity",
     )
 
@@ -40,6 +41,7 @@ class Settings:
         model_output_limit: Optional[int] = None,
         allowlist: Optional[list[str]] = None,
         denylist: Optional[list[str]] = None,
+        vision: Optional[list[str]] = None,
         verbosity: int = 0,
     ):
         self.base_url = base_url
@@ -52,6 +54,7 @@ class Settings:
         self.model_output_limit = model_output_limit
         self.allowlist = allowlist
         self.denylist = denylist
+        self.vision = vision
         self.verbosity = verbosity
 
 
@@ -79,6 +82,7 @@ def resolve_settings(
     model_output_limit: Optional[int] = None,
     allowlist: Optional[str] = None,
     denylist: Optional[str] = None,
+    vision: Optional[str] = None,
     verbosity: int = 0,
 ) -> Settings:
     """Merge CLI arguments and environment variables into a ``Settings`` object.
@@ -105,6 +109,8 @@ def resolve_settings(
         Comma-separated model IDs to keep.
     denylist : str | None
         Comma-separated model IDs to exclude.
+    vision : str | None
+        Comma-separated glob patterns for vision-enabled models.
     verbosity : int
         Integer verbosity level (0-3).
 
@@ -141,9 +147,10 @@ def resolve_settings(
         provider_name = derive_provider_name(base_url)
         logger.debug("Auto-resolved provider name: %s", provider_name)
 
-    # Parse allowlist and denylist
+    # Parse allowlist, denylist, and vision
     allow_list = _parse_comma_list(allowlist)
     deny_list = _parse_comma_list(denylist)
+    vision_list = _parse_comma_list(vision)
 
     # Normalize base_url: ensure it ends with /v1 (the prefix for the models endpoint).
     # The client appends /models, so the full URL is base_url + "/models".
@@ -169,5 +176,6 @@ def resolve_settings(
         model_output_limit=model_output_limit,
         allowlist=allow_list,
         denylist=deny_list,
+        vision=vision_list,
         verbosity=verbosity,
     )

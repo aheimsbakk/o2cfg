@@ -137,6 +137,16 @@ def build_parser() -> argparse.ArgumentParser:
         help="Comma-separated list of model IDs to exclude, even if they were discovered.",
     )
 
+    parser.add_argument(
+        "-i",
+        "--vision",
+        type=str,
+        nargs="?",
+        const=None,
+        default=None,
+        help="Comma-separated list of glob patterns for vision-enabled models. Models matching any pattern receive a vision stanza (attachment + modalities).",
+    )
+
     return parser
 
 

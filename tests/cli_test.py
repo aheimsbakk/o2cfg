@@ -80,6 +80,21 @@ class TestBuildParser:
         args = parser.parse_args(["--denylist", "text-davinci-001"])
         assert args.denylist == "text-davinci-001"
 
+    def test_parser_has_vision_flag(self):
+        parser = build_parser()
+        args = parser.parse_args(["--vision", "gpt-4o,gpt-4-vision"])
+        assert args.vision == "gpt-4o,gpt-4-vision"
+
+    def test_parser_has_short_vision_flag(self):
+        parser = build_parser()
+        args = parser.parse_args(["-i", "gpt-4o,gpt-4-vision"])
+        assert args.vision == "gpt-4o,gpt-4-vision"
+
+    def test_vision_default_is_none(self):
+        parser = build_parser()
+        args = parser.parse_args([])
+        assert args.vision is None
+
     def test_short_flags(self):
         parser = build_parser()
         args = parser.parse_args(
@@ -102,6 +117,8 @@ class TestBuildParser:
                 "model-a",
                 "-d",
                 "model-b",
+                "-i",
+                "gpt-4o",
             ]
         )
         assert args.url == "http://localhost:8080/v1"
@@ -113,6 +130,7 @@ class TestBuildParser:
         assert args.model_output_limit == 32000
         assert args.allowlist == "model-a"
         assert args.denylist == "model-b"
+        assert args.vision == "gpt-4o"
 
 
 class TestParseArgs:
