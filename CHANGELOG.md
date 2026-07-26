@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.4.1] - 2026-07-26
+
+- **why:** Fix empty-string fallback for --url and --api-key, narrow bare except blocks, and add missing error logging
+- **model:** kompis/qwen-3.6-think-coding-mtp
+- **tags:** bug-fix, error-handling, cli, validation
+
+### Fixed
+
+- `--url` and `--api-key` now distinguish "flag not passed" from "flag passed empty" via `const=""` (`o2cfg/cli.py`)
+- `resolve_settings()` no longer silently overwrites user-provided empty strings with environment variable values (`o2cfg/config.py`)
+- Timeout validation moved into `resolve_settings()` for consistent error handling and exit code 2 (`o2cfg/config.py`, `o2cfg/__main__.py`)
+- HTTP error body parsing catch block narrowed from `Exception` to `(OSError, UnicodeDecodeError)` (`o2cfg/client.py`)
+- Temp file cleanup in `_write_file()` now logs warnings instead of silently swallowing `OSError` (`o2cfg/output.py`)
+- Model mapper now logs skipped models instead of silently passing (`o2cfg/mapper.py`)
+- `_parse_comma_list()` return type simplified to always return `list[str]` (`o2cfg/config.py`)
+- Renamed misleading test `test_run_missing_url_env_var_exits_2` to `test_run_url_flag_works_without_env_var` (`tests/main_run_errors_test.py`)
+
 ## [0.4.0] - 2026-07-18
 
 - **why:** Add vision model support so opencode can recognize image-capable models from OpenAI-compatible APIs

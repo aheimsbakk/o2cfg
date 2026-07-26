@@ -131,9 +131,9 @@ def fetch_models(
                     error_detail = error_body.get("error", {}).get("message", "")
                 except (json.JSONDecodeError, ValueError):
                     error_detail = body[:500] if body else "(empty body)"
-        except Exception:
+        except (OSError, UnicodeDecodeError):
             # If we can't read the body, keep error_detail empty
-            pass
+            logger.debug("Could not read HTTP error response body")
 
         raise DiscoveryError(
             f"HTTP {status} from {url}: {error_detail}"

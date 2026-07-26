@@ -116,5 +116,5 @@ def _write_file(json_str: str, output_file_path: str) -> None:
         try:
             os.unlink(tmp_path)
         except OSError:
-            pass
+            logger.warning("Failed to remove temporary file %s", tmp_path)
         raise

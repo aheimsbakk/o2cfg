@@ -12,9 +12,6 @@ from o2cfg.provider_name import derive_provider_name
 class TestParseCommaList:
     """Test comma-separated list parsing."""
 
-    def test_none_returns_none(self):
-        assert _parse_comma_list(None) is None
-
     def test_empty_string_returns_empty_list(self):
         assert _parse_comma_list("") == []
 

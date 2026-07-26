@@ -92,11 +92,6 @@ def _run(argv: list[str] | None = None) -> int:
         logger.error("%s", exc)
         return 2
 
-    # Validate timeout range
-    if settings.timeout < 1 or settings.timeout > 300:
-        logger.error("Timeout must be between 1 and 300 seconds.")
-        return 1
-
     # Fetch models from API
     models_list: list[dict[str, Any]] = []
     discovery_error: DiscoveryError | None = None
