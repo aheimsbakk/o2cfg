@@ -17,7 +17,7 @@ class TestRunErrors:
         assert code == 2
         assert "Missing base URL" in caplog.text
 
-    def test_run_missing_url_env_var_exits_2(self, monkeypatch):
+    def test_run_url_flag_works_without_env_var(self, monkeypatch):
         monkeypatch.delenv("OPENAI_BASE_URL", raising=False)
 
         def mock_fetch(*args, **kwargs):
@@ -27,9 +27,9 @@ class TestRunErrors:
         code = run(["--url", "http://localhost:8080/v1"])
         assert code == 0  # URL provided via flag
 
-    def test_run_invalid_timeout_exits_1(self, caplog):
+    def test_run_invalid_timeout_exits_2(self, caplog):
         code = run(["--url", "http://localhost:8080/v1", "--timeout", "999"])
-        assert code == 1
+        assert code == 2
         assert "timeout" in caplog.text.lower()
 
     def test_run_unhandled_exception_exits_1(self, caplog):

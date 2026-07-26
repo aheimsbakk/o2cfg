@@ -1,6 +1,7 @@
 """Model Mapper — transform API model objects into opencode schema format."""
 
 import fnmatch
+import logging
 from typing import Any
 
 
@@ -13,6 +14,8 @@ CONTEXT_LIMIT_FIELDS = [
     "context_window",
 ]
 OUTPUT_LIMIT_FIELDS = ["max_output_tokens", "max_tokens"]
+
+logger = logging.getLogger(__name__)
 
 
 def _extract_limit(
@@ -149,5 +152,5 @@ def map_models(
             result[mapped["name"]] = mapped
         except ValueError:
             # Skip models without an id
-            pass
+            logger.debug("Skipping model without 'id' field")
     return result

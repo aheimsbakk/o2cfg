@@ -50,7 +50,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--url",
         type=str,
         nargs="?",
-        const=None,
+        const="",
         default=os.environ.get("OPENAI_BASE_URL"),
         help="Base URL of the OpenAI-compatible endpoint (e.g. http://localhost:8080/v1). Falls back to OPENAI_BASE_URL env var.",
     )
@@ -60,7 +60,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--api-key",
         type=str,
         nargs="?",
-        const=None,
+        const="",
         default=os.environ.get("OPENAI_API_KEY"),
         help="Bearer token for authenticated endpoints. Falls back to OPENAI_API_KEY env var.",
     )

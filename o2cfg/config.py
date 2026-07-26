@@ -58,17 +58,14 @@ class Settings:
         self.verbosity = verbosity
 
 
-def _parse_comma_list(value: Optional[str]) -> Optional[list[str]]:
+def _parse_comma_list(value: str) -> list[str]:
     """Parse a comma-separated string into a list of stripped, non-empty strings.
 
-    Returns ``None`` when *value* is ``None``.  Returns an empty list when the
-    string is empty or contains only whitespace / commas.
+    Returns an empty list when *value* is empty or contains only whitespace / commas.
     """
-    if value is None:
-        return None
     parts = [p.strip() for p in value.split(",")]
     result = [p for p in parts if p]
-    return result if result else []
+    return result
 
 
 def resolve_settings(
@@ -124,10 +121,10 @@ def resolve_settings(
     ValueError
         When *base_url* is ``None`` or empty.
     """
-    # Fall back to environment variables when CLI flags are absent or empty.
-    if not base_url:
+    # Fall back to environment variables when CLI flags are not provided.
+    if base_url is None:
         base_url = os.environ.get("OPENAI_BASE_URL")
-    if not api_key:
+    if api_key is None:
         api_key = os.environ.get("OPENAI_API_KEY")
 
     if not base_url:
@@ -142,15 +139,19 @@ def resolve_settings(
             f"Invalid URL scheme '{parsed_url.scheme}'. Only 'http' and 'https' are allowed."
         )
 
+    # Validate timeout range
+    if timeout < 1 or timeout > 300:
+        raise ValueError("Timeout must be between 1 and 300 seconds.")
+
     # Derive provider name if not explicitly provided
     if not provider_name:
         provider_name = derive_provider_name(base_url)
         logger.debug("Auto-resolved provider name: %s", provider_name)
 
     # Parse allowlist, denylist, and vision
-    allow_list = _parse_comma_list(allowlist)
-    deny_list = _parse_comma_list(denylist)
-    vision_list = _parse_comma_list(vision)
+    allow_list = _parse_comma_list(allowlist) if allowlist is not None else None
+    deny_list = _parse_comma_list(denylist) if denylist is not None else None
+    vision_list = _parse_comma_list(vision) if vision is not None else None
 
     # Normalize base_url: ensure it ends with /v1 (the prefix for the models endpoint).
     # The client appends /models, so the full URL is base_url + "/models".
