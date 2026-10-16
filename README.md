@@ -28,8 +28,10 @@ cd o2cfg
 uv venv
 source .venv/bin/activate      # Linux / macOS
 # .venv\Scripts\activate       # Windows
-uv pip install -e ".[test]"
+uv pip install .
 ```
+
+For the development setup with test dependencies, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Run it
 
@@ -219,24 +221,7 @@ This design lets you set up your opencode provider block first, then add models 
 - Discovery always runs regardless of `--api-key`. A failed call produces a warning and leaves `models` empty; it never aborts the run.
 - No files are written unless you use `--output`, `-o` or shell redirection (`> file.json`). Output goes to stdout by default.
 
-## Development
+## Contributing
 
-After cloning the repository:
-
-```bash
-uv venv
-source .venv/bin/activate
-uv pip install -e ".[test]"
-pytest  # run all tests
-```
-
-The project uses only Python standard library modules plus `pytest` for testing. No external runtime dependencies are required.
-
-> [!NOTE]
->
-> Architecture (BLUEPRINT.md): Qwen 3.6 35B A3B
-> - temp = 1.0, top-p = 0.95, top-k = 20, min-p = 0.0, presence-penalty = 1.5,
-repeat-penalty = 1.0
->
-> Code: Qwen 3.6 35B A3B
-> - temp = 0.6, top-p = 0.95, top-k = 20, min-p = 0.0, presence-penalty = 0.0, repeat-penalty = 1.0
+Development setup, test commands, coverage rules, and repository scripts are
+documented in [CONTRIBUTING.md](CONTRIBUTING.md).

@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.4.3] - 2026-10-16
+
+- **why:** Split README into user documentation and developer documentation per RULES.md rule 28
+- **model:** kompis/qwen3.8-flash-next-iq3_s
+- **tags:** docs, readme, contributing, sync
+
+### Added
+
+- `CONTRIBUTING.md`: development setup, test and coverage commands, usage for all three `scripts/` tools, commit workflow, and the generation tooling settings note
+- Memory entry warning that CODEBASE.md must list explicit file paths, not glob patterns
+
+### Changed
+
+- `README.md` now holds user-facing content only; "Install from source" uses `uv pip install .` and links to `CONTRIBUTING.md`
+- `CODEBASE.md` directory tree lists `CONTRIBUTING.md`; the integration test row names the three `main_run_*` test files instead of a glob
+
+### Removed
+
+- "Development" section and the generation-model note from `README.md` (content moved to `CONTRIBUTING.md`)
+
 ## [0.4.2] - 2026-10-16
 
 - **why:** Tighten agent governance rules and disable opencode auto-update
