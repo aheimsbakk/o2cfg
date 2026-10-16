@@ -1,7 +1,7 @@
 """Tests for o2cfg CLI argument parsing."""
 
 import pytest
-from o2cfg.cli import build_parser, parse_args, resolve_verbosity, get_verbosity_label
+from o2cfg.cli import build_parser, parse_args, resolve_verbosity
 
 
 class TestBuildParser:
@@ -164,12 +164,6 @@ class TestResolveVerbosity:
         args = type("Args", (), {"verbosity": 1})()
         assert resolve_verbosity(args) == 1
 
-    def test_single_v_is_not_default(self):
-        """No flags (0) and -v (1) produce different levels."""
-        args_no_flag = type("Args", (), {"verbosity": 0})()
-        args_v = type("Args", (), {"verbosity": 1})()
-        assert resolve_verbosity(args_no_flag) != resolve_verbosity(args_v)
-
     def test_info_level(self):
         args = type("Args", (), {"verbosity": 2})()
         assert resolve_verbosity(args) == 2
@@ -181,22 +175,3 @@ class TestResolveVerbosity:
     def test_capped_at_three(self):
         args = type("Args", (), {"verbosity": 10})()
         assert resolve_verbosity(args) == 3
-
-
-class TestGetVerbosityLabel:
-    """Test verbosity label resolution."""
-
-    def test_default_is_error(self):
-        assert get_verbosity_label(0) == "error"
-
-    def test_warning(self):
-        assert get_verbosity_label(1) == "warning"
-
-    def test_info(self):
-        assert get_verbosity_label(2) == "info"
-
-    def test_debug(self):
-        assert get_verbosity_label(3) == "debug"
-
-    def test_unknown_returns_warning(self):
-        assert get_verbosity_label(99) == "warning"

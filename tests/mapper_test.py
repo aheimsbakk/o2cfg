@@ -27,6 +27,12 @@ class TestExtractLimit:
         result = _extract_limit(model, ["max_input_tokens", "context_length"], None)
         assert result == 200
 
+    def test_skips_bool_value(self):
+        # Regression: bool is an int subclass; true must not become a limit.
+        model = {"max_input_tokens": True, "context_length": 200}
+        result = _extract_limit(model, ["max_input_tokens", "context_length"], None)
+        assert result == 200
+
     def test_returns_fallback_when_not_found(self):
         model = {"owned_by": "test"}
         result = _extract_limit(model, ["max_input_tokens"], 50000)

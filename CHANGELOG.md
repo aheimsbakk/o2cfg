@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.4.4] - 2026-10-16
+
+- **why:** Remove dead code, isolate tests from ambient environment variables, and enforce the coverage gate
+- **model:** kompis/qwen3.8-flash-next-iq3_s
+- **tags:** cleanup, testing, coverage, hardening
+
+### Added
+
+- Autouse `isolate_openai_env` fixture deletes `OPENAI_BASE_URL` and `OPENAI_API_KEY` for every test (`tests/conftest.py`)
+- `test_skips_bool_value` regression test for the mapper bool edge (`tests/mapper_test.py`)
+- `test_run_with_discovery_failure_exits_1` now asserts no partial config file is left on disk (`tests/main_run_errors_test.py`)
+
+### Changed
+
+- `_extract_limit()` rejects bool values so `true` never becomes a token limit (`o2cfg/mapper.py`)
+- `BLUEPRINT.md` sections 1, 10, and 12 now match actual exit codes and output-path checks
+- `provider_name.py` docstring documents the IPv6 hostname limitation
+
+### Removed
+
+- Unused `VERBOSITY_MAP` and `get_verbosity_label()` (`o2cfg/cli.py`)
+- Unreachable non-200 response branch (`o2cfg/client.py`)
+- Duplicate and tautological tests, plus the unused `sample_models_response_with_limits` fixture
+
 ## [0.4.3] - 2026-10-16
 
 - **why:** Split README into user documentation and developer documentation per RULES.md rule 28

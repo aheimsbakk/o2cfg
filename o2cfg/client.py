@@ -80,21 +80,8 @@ def fetch_models(
             status = response.status
             body = response.read().decode("utf-8")
 
-            if status != 200:
-                # Try to parse error body for context
-                error_detail = ""
-                try:
-                    error_body = json.loads(body)
-                    error_detail = error_body.get("error", {}).get("message", "")
-                except (json.JSONDecodeError, ValueError):
-                    error_detail = body[:500] if body else "(empty body)"
-
-                raise DiscoveryError(
-                    f"HTTP {status} from {url}: {error_detail}",
-                    status_code=status,
-                    url=url,
-                )
-
+            # No non-2xx check here: urlopen raises HTTPError for error
+            # statuses, so a response reaching this point is always 2xx.
             # Parse the JSON response
             try:
                 data = json.loads(body)

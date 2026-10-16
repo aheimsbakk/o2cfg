@@ -56,10 +56,6 @@ class TestFilterModels:
         result = filter_models(SAMPLE_MODELS, allowlist=None)
         assert len(result) == 4
 
-    def test_both_none_returns_all(self):
-        result = filter_models(SAMPLE_MODELS, denylist=None, allowlist=None)
-        assert len(result) == 4
-
     def test_denylist_nonexistent_ids_is_noop(self):
         result = filter_models(SAMPLE_MODELS, denylist=["nonexistent-model"])
         assert len(result) == 4

@@ -42,25 +42,17 @@ SAMPLE_MODELS_RESPONSE_EMPTY = {
 }
 
 
-SAMPLE_MODELS_RESPONSE_WITH_LIMITS = {
-    "object": "list",
-    "data": [
-        {
-            "id": "custom-model",
-            "object": "model",
-            "created": 1700000000,
-            "owned_by": "test",
-            "max_input_tokens": 256000,
-            "max_output_tokens": 64000,
-        },
-        {
-            "id": "no-limits-model",
-            "object": "model",
-            "created": 1700000000,
-            "owned_by": "test",
-        },
-    ],
-}
+@pytest.fixture(autouse=True)
+def isolate_openai_env(monkeypatch):
+    """Remove ambient OpenAI env vars for every test.
+
+    Both ``cli.py`` (parser defaults) and ``config.py`` (resolver fallback)
+    read these variables.  Without isolation, a developer shell that exports
+    them flips "missing URL" tests into passing states — and worse, sends
+    real network requests from the test suite.
+    """
+    monkeypatch.delenv("OPENAI_BASE_URL", raising=False)
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
 
 
 @pytest.fixture
@@ -73,12 +65,6 @@ def sample_models_response():
 def sample_models_response_empty():
     """Return an empty /v1/models response dict."""
     return SAMPLE_MODELS_RESPONSE_EMPTY
-
-
-@pytest.fixture
-def sample_models_response_with_limits():
-    """Return a /v1/models response with mixed limit fields."""
-    return SAMPLE_MODELS_RESPONSE_WITH_LIMITS
 
 
 @pytest.fixture

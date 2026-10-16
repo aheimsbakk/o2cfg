@@ -42,7 +42,9 @@ def _extract_limit(
     """
     for field in fields:
         value = model.get(field)
-        if isinstance(value, int) and value > 0:
+        # bool is an int subclass in Python; a server returning true/false
+        # must not leak into the config as a token limit.
+        if isinstance(value, int) and not isinstance(value, bool) and value > 0:
             return value
     return fallback
 

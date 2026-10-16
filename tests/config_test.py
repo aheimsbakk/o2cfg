@@ -139,10 +139,6 @@ class TestResolveSettings:
         settings = resolve_settings(base_url="http://localhost:8080/api")
         assert settings.base_url == "http://localhost:8080/api/v1"
 
-    def test_http_scheme_accepted(self):
-        settings = resolve_settings(base_url="http://localhost:8080/v1")
-        assert settings.base_url == "http://localhost:8080/v1"
-
     def test_https_scheme_accepted(self):
         settings = resolve_settings(base_url="https://api.example.com/v1")
         assert settings.base_url == "https://api.example.com/v1"
@@ -186,21 +182,6 @@ class TestResolveSettings:
 
 class TestSettingsClass:
     """Test the Settings data container."""
-
-    def test_slots_exist(self):
-        settings = Settings(base_url="http://test/v1")
-        assert hasattr(settings, "base_url")
-        assert hasattr(settings, "api_key")
-        assert hasattr(settings, "output_file_path")
-        assert hasattr(settings, "provider_name")
-        assert hasattr(settings, "provider_npm")
-        assert hasattr(settings, "timeout")
-        assert hasattr(settings, "model_context_limit")
-        assert hasattr(settings, "model_output_limit")
-        assert hasattr(settings, "allowlist")
-        assert hasattr(settings, "denylist")
-        assert hasattr(settings, "vision")
-        assert hasattr(settings, "verbosity")
 
     def test_default_values(self):
         settings = Settings(base_url="http://test/v1")

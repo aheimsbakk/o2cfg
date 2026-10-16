@@ -10,13 +10,6 @@ DEFAULT_TIMEOUT = 30
 MIN_TIMEOUT = 1
 MAX_TIMEOUT = 300
 
-VERBOSITY_MAP = {
-    0: "error",
-    1: "warning",
-    2: "info",
-    3: "debug",
-}
-
 
 def build_parser() -> argparse.ArgumentParser:
     """Build and return the argument parser.
@@ -176,8 +169,3 @@ def resolve_verbosity(args) -> int:
     """
     level = args.verbosity
     return min(level, 3)
-
-
-def get_verbosity_label(level: int) -> str:
-    """Return a human-readable verbosity label for the given integer level."""
-    return VERBOSITY_MAP.get(level, "warning")

@@ -29,10 +29,6 @@ class TestFetchModels:
         assert models[0]["id"] == "gpt-4o"
         mock_urlopen_success.assert_called_once()
 
-    def test_success_without_api_key(self, mock_urlopen_success):
-        models = fetch_models("http://localhost:8080/v1")
-        assert len(models) == 3
-
     def test_success_with_api_key(self, mock_urlopen_success):
         models = fetch_models("http://localhost:8080/v1", api_key="sk-test-123")
         assert len(models) == 3

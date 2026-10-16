@@ -15,6 +15,10 @@ def derive_provider_name(base_url: str) -> str:
     5. Replace hyphens and underscores with spaces for readability.
     6. If the hostname is empty or unparseable, return the hardcoded default.
 
+    Known limitation: bracketed IPv6 hostnames (``http://[::1]:8080/v1``)
+    are not parsed specially; the port strip can mis-split them and a wrong
+    label may be returned instead of the default.
+
     Parameters
     ----------
     base_url : str

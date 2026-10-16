@@ -59,6 +59,8 @@ class TestRunDiscoveryErrors:
             ["--url", "http://localhost:8080/v1", "--output", output_path, "-vv"]
         )
         assert code == 1
+        # A failed discovery must not leave a partial config on disk.
+        assert not os.path.exists(output_path)
 
     def test_run_discovery_error_non_auth_exits_1(self, monkeypatch, temp_output_dir):
         """Non-auth discovery errors (timeout, unreachable, non-200) exit 1."""
