@@ -12,6 +12,7 @@
 ```
 o2cfg/
 ├── .gitignore
+├── CONTRIBUTING.md         # dev setup, tests, coverage, scripts, commit workflow
 ├── pyproject.toml          # project metadata, package info, test config (uv-compatible)
 ├── README.md               # usage, install, quick start
 ├── o2cfg/                  # source package
@@ -55,7 +56,7 @@ o2cfg/
 | Model Mapper              | `o2cfg/mapper.py`       | `tests/mapper_test.py`  | Schema transformation, auto-discovery    |
 | Output Writer (stdout/file) | `o2cfg/output.py`        | `tests/main_output_test.py` | stdout by default; atomic file write with `--output` |
 | Config Document Builder   | `o2cfg/output.py`        | `tests/main_config_doc_test.py` | Build opencode JSON structure |
-| Integration (run pipeline) | `o2cfg/__main__.py`   | `tests/main_run_*.py`   | Full CLI run with mocked discovery       |
+| Integration (run pipeline) | `o2cfg/__main__.py`   | `tests/main_run_basic_test.py`, `tests/main_run_errors_test.py`, `tests/main_run_test.py` | Full CLI run with mocked discovery       |
 
 ---
 
