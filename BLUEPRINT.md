@@ -9,7 +9,7 @@
 - Fetch the complete list of models from any OpenAI-compatible server endpoint.
 - Generate valid opencode provider config containing connection information and discovered models.
 - Require minimal user input: only a base URL. The API key is optional and used for authenticated endpoints. Endpoints that do not require authentication work without a key.
-- Output goes to stdout by default so it can be viewed or piped to a file (`> opencode.json`). Use `--output <path>` to write directly to disk. Discovery failure produces a warning but the tool still emits valid config with an empty models map.
+- Output goes to stdout by default so it can be viewed or piped to a file (`> opencode.json`). Use `--output <path>` to write directly to disk. Auth failures (HTTP 401/403) produce a warning and the tool still emits valid config with an empty models map. Other discovery failures (unreachable host, timeout, non-auth HTTP error, invalid JSON) abort with exit code 1.
 
 ---
 
@@ -264,7 +264,7 @@ When `--output <path>` is provided:
 
 | Failure Mode                     | Behavior                                                             | Exit Code |
 |----------------------------------|----------------------------------------------------------------------|-----------|
-| No base URL (flag + env both set)| Print usage hint for missing `--url` to stderr.                       | `2`       |
+| No base URL (flag + env both unset)| Print usage hint for missing `--url` to stderr.                       | `2`       |
 | API call fails (no key or bad key)            | Log the network error; include an empty models map in the output.                               | `0`       |
 | Network unreachable / timeout | Log error message with the failed URL; suggest checking connectivity | `1` |
 | Non-200 HTTP response         | Log status code and body (if available, redacted).    | `1`       |
@@ -288,7 +288,7 @@ Empty catch blocks are forbidden. All caught errors must either be handled with 
 
 - `OPENAI_API_KEY` / `--api-key`: kept in memory during the invocation and written verbatim into `.provider.<name>.options.apiKey` in the output file when provided. Never logged at any verbosity level.
 - Input validation: `base_url` must be a valid URI with scheme `http` or `https`. Other schemes cause a hard error.
-- Path traversal guard: the output file path is resolved and a parent-directory check prevents writes outside the requested location.
+- Output path validation: the output file path is resolved and its parent directory must exist; a missing parent directory produces a clear error instead of a traceback. The tool is a local CLI — the invoking user selects the output path and is already bounded by their own filesystem permissions, so no sandboxing beyond this is applied.
 
 ---
 
