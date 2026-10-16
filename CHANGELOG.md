@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.4.2] - 2026-10-16
+
+- **why:** Tighten agent governance rules and disable opencode auto-update
+- **model:** kompis/qwen3.8-flash-next-iq3_s
+- **tags:** governance, rules, tooling, config
+
+### Added
+
+- `RULES.md` rule 8 "Commit Consent": never commit, push, or open PRs without an explicit user request
+- `RULES.md` rule 19 "Verification Gate": run lint, typecheck, and tests before completion
+- `RULES.md` rule 27 "Intent-Based Commenting" and rule 28 "Documentation Separation" (README vs. CONTRIBUTING)
+
+### Changed
+
+- `RULES.md` rule 9 rewritten as "Layer Boundaries"; rule 15 rewritten as "State Ownership & Concurrency"
+- `RULES.md` rule 18 "Test-Driven Fixes" now reads reproduce → regression test → fix, and skips when no test framework exists
+- `opencode.json` set `autoupdate` to `false` and added a commented-out Playwright MCP server block
+
+### Removed
+
+- `RULES.md` rule "Protocol Alignment" and the separate "Presentation & Logic Separation" rule (folded into Layer Boundaries)
+- "Builder hands off to QA" clause from the wrap-up skill description (`.opencode/skills/wrap-up/SKILL.md`)
+
 ## [0.4.1] - 2026-07-26
 
 - **why:** Fix empty-string fallback for --url and --api-key, narrow bare except blocks, and add missing error logging
